@@ -1,0 +1,38 @@
+---
+import Icono from '../Icono.astro';
+import TituloSeccion from '../TituloSeccion.astro';
+
+const beneficios = [
+	{ icono: 'Lock', texto: 'Precio congelado' },
+	{ icono: 'Infinity', texto: 'Sin límite de edad' },
+	{ icono: 'Building2', texto: 'Instalaciones propias' },
+	{ icono: 'Repeat', texto: 'Planes transferibles' },
+	{ icono: 'FileText', texto: 'Respaldo mediante contrato' },
+	{ icono: 'CalendarHeart', texto: 'Hasta 36 meses sin intereses' },
+] as const;
+---
+
+<section class="relative isolate overflow-hidden bg-marca py-20 text-white sm:py-24">
+	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_90%_10%,rgb(217_180_108/0.25),transparent_55%)]"></div>
+	<div class="mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-2 lg:gap-20">
+		<div>
+			<TituloSeccion antetitulo="Planes de previsión" titulo="Protege a tu familia hoy, sin sorpresas ni letras chiquitas" oscuro>
+				<p class="mt-5 text-lg text-white/85">
+					Pensar en el mañana también es una forma de cuidar a los tuyos. Con un plan de previsión congelas el costo del servicio y evitas decisiones difíciles en un momento de dolor.
+				</p>
+			</TituloSeccion>
+			<a href="/prevision" class="mt-8 inline-flex items-center gap-2 rounded-md bg-white px-6 py-3.5 font-bold text-ciruela transition hover:bg-oro-claro">
+				Conoce los planes <Icono nombre="ArrowRight" class="size-5" />
+			</a>
+		</div>
+
+		<ul class="grid grid-cols-2 gap-4 sm:grid-cols-3">
+			{beneficios.map((b) => (
+				<li class="rounded-xl bg-white/[0.07] p-5 ring-1 ring-white/15">
+					<Icono nombre={b.icono} class="size-7 text-oro-claro" />
+					<p class="mt-3 font-semibold leading-snug">{b.texto}</p>
+				</li>
+			))}
+		</ul>
+	</div>
+</section>

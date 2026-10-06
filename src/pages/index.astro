@@ -1,10 +1,23 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/inicio/Hero.astro';
+import Historia from '../components/inicio/Historia.astro';
+import Prevision from '../components/inicio/Prevision.astro';
+import QueHacer from '../components/inicio/QueHacer.astro';
+import Servicios from '../components/inicio/Servicios.astro';
+import Sucursales from '../components/inicio/Sucursales.astro';
 ---
 
-<Layout>
-	<main class="mx-auto flex min-h-screen max-w-3xl flex-col items-center justify-center px-4 text-center">
-		<h1 class="text-4xl font-semibold tracking-tight">Funerales González</h1>
-		<p class="mt-4 text-marca">Sitio en construcción.</p>
+<Layout
+	title="Funerales González · Funeraria en Monterrey desde 1945"
+	description="Servicios funerarios, cremación y planes de previsión en Monterrey, Montemorelos e Hidalgo, N.L. Atención 24 horas. Una institución familiar desde 1945."
+>
+	<main>
+		<Hero />
+		<QueHacer />
+		<Servicios />
+		<Prevision />
+		<Historia />
+		<Sucursales />
 	</main>
 </Layout>

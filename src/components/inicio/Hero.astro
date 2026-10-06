@@ -1,0 +1,45 @@
+---
+import Icono from '../Icono.astro';
+import { sitio } from '../../data/sitio';
+---
+
+<section class="relative isolate overflow-hidden bg-ciruela text-white">
+	<!-- Luz cálida de fondo; se sustituirá por fotografía real de las instalaciones -->
+	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_20%,rgb(173_118_14/0.35),transparent_60%),radial-gradient(ellipse_at_10%_90%,rgb(99_78_60/0.6),transparent_55%)]"></div>
+
+	<div class="mx-auto max-w-4xl px-4 py-20 text-center sm:py-28 lg:py-32">
+		<p class="flex items-center justify-center gap-3 text-sm font-bold tracking-[0.25em] text-oro-claro uppercase">
+			<span class="h-px w-10 bg-oro-claro/60"></span>
+			Desde 1945
+			<span class="h-px w-10 bg-oro-claro/60"></span>
+		</p>
+		<h1 class="mt-6 text-4xl leading-[1.15] text-balance text-white sm:text-5xl lg:text-6xl">
+			Estamos contigo <em class="text-oro-claro">en el momento que más lo necesitas</em>
+		</h1>
+		<p class="mx-auto mt-6 max-w-2xl text-lg text-white/80">
+			Tres generaciones de la familia González acompañando a las familias de Nuevo León con cercanía, respeto y profesionalismo.
+		</p>
+
+		<div class="mt-10 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
+			<a
+				href={sitio.whatsapp.href}
+				target="_blank"
+				rel="noopener"
+				class="inline-flex items-center justify-center gap-2 rounded-md bg-oro-claro px-7 py-4 text-lg font-bold text-ciruela shadow-lg transition hover:bg-white"
+			>
+				<Icono nombre="MessageCircle" class="size-5" />
+				Perdí a un familiar
+			</a>
+			<a
+				href="/prevision"
+				class="inline-flex items-center justify-center gap-2 rounded-md px-7 py-4 text-lg font-bold text-white ring-1 ring-white/50 transition ring-inset hover:bg-white/10 hover:ring-white"
+			>
+				Quiero conocer un Plan de Previsión
+			</a>
+		</div>
+
+		<p class="mt-8 text-white/70">
+			Atención 24 horas · <a href={sitio.telefono.href} class="font-semibold text-white underline-offset-4 hover:underline">{sitio.telefono.mostrar}</a>
+		</p>
+	</div>
+</section>

@@ -1,0 +1,40 @@
+---
+import Icono from '../Icono.astro';
+import TituloSeccion from '../TituloSeccion.astro';
+
+const anios = new Date().getFullYear() - 1945;
+---
+
+<section class="bg-white py-20 sm:py-24">
+	<div class="mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-[2fr_3fr] lg:gap-20">
+		<!-- Espacio reservado para una fotografía histórica o de la familia propietaria -->
+		<div class="relative rounded-2xl bg-lavanda px-8 py-14 text-center">
+			<p class="font-serif text-7xl font-semibold text-oro-oscuro sm:text-8xl">1945</p>
+			<p class="mt-2 text-sm font-bold tracking-[0.2em] text-marca uppercase">Una institución familiar</p>
+			<div class="mx-auto mt-8 grid max-w-xs grid-cols-2 divide-x divide-marca/20">
+				<div>
+					<p class="font-serif text-4xl font-semibold text-ciruela">{anios}</p>
+					<p class="text-sm text-marca">años de servicio</p>
+				</div>
+				<div>
+					<p class="font-serif text-4xl font-semibold text-ciruela">3</p>
+					<p class="text-sm text-marca">generaciones</p>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<TituloSeccion antetitulo="Nuestra historia" titulo="Más de 80 años de historia, un mismo compromiso">
+				<p class="mt-5 text-lg text-tinta/85">
+					Desde 1945, tres generaciones de la familia González han acompañado a las familias de Monterrey en los momentos más difíciles, con cercanía, respeto y profesionalismo.
+				</p>
+				<p class="mt-4 text-lg text-tinta/85">
+					Contamos con instalaciones propias, personal capacitado y la capacidad para atender desde servicios inmediatos hasta planes de previsión a futuro.
+				</p>
+			</TituloSeccion>
+			<a href="/nosotros" class="mt-8 inline-flex items-center gap-2 font-bold text-oro-oscuro hover:text-marca">
+				Conoce nuestra historia <Icono nombre="ArrowRight" class="size-5" />
+			</a>
+		</div>
+	</div>
+</section>

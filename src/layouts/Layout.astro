@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import BarraContactoMovil from '../components/BarraContactoMovil.astro';
+import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
 interface Props {
@@ -28,6 +29,7 @@ const {
 	<body class="min-h-screen pb-[calc(3.5rem+env(safe-area-inset-bottom))] antialiased md:pb-0">
 		<Header />
 		<slot />
+		<Footer />
 		<BarraContactoMovil />
 	</body>
 </html>

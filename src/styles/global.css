@@ -14,6 +14,7 @@
 	--color-oro: #ad760e;          /* ocre/dorado: cabecera, acentos */
 	--color-oro-oscuro: #80490a;   /* marrón cálido: pie, enlaces, bordes */
 	--color-ciruela: #281a39;      /* morado profundo: titulares y texto fuerte */
+	--color-oro-claro: #d9b46c;    /* dorado claro: acentos sobre fondos oscuros */
 
 	/* Neutros */
 	--color-lavanda: #e9e6eb;      /* fondos suaves de sección */

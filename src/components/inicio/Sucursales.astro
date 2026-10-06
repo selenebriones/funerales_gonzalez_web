@@ -1,0 +1,42 @@
+---
+import Icono from '../Icono.astro';
+import TituloSeccion from '../TituloSeccion.astro';
+import { sucursales } from '../../data/sitio';
+
+const tel = (t: string) => `tel:+52${t.replace(/\D/g, '')}`;
+---
+
+<!-- TODO: mapa con las 4 ubicaciones (nota del documento de contenido) -->
+<section class="bg-lavanda py-20 sm:py-24">
+	<div class="mx-auto max-w-7xl px-4">
+		<TituloSeccion antetitulo="Sucursales" titulo="Cerca de ti en Monterrey y la región" centrado />
+
+		<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+			{sucursales.map((s) => (
+				<li class="flex flex-col rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5">
+					<h3 class="text-xl">{s.nombre}</h3>
+					<p class="mt-3 flex flex-1 gap-2 text-sm text-tinta/80">
+						<Icono nombre="MapPin" class="mt-0.5 size-4 shrink-0 text-oro-oscuro" />
+						{s.direccion}
+					</p>
+					<ul class="mt-4 space-y-1">
+						{s.telefonos.map((t) => (
+							<li>
+								<a href={tel(t)} class="inline-flex items-center gap-2 font-semibold text-ciruela hover:text-oro-oscuro">
+									<Icono nombre="Phone" class="size-4 text-oro-oscuro" /> {t}
+								</a>
+							</li>
+						))}
+					</ul>
+					<a href={s.mapa} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-oro-oscuro hover:text-marca">
+						Cómo llegar <Icono nombre="ArrowRight" class="size-4" />
+					</a>
+				</li>
+			))}
+		</ul>
+
+		<p class="mt-10 text-center">
+			<a href="/sucursales" class="font-bold text-oro-oscuro hover:text-marca">Ver instalaciones y servicios de cada sucursal</a>
+		</p>
+	</div>
+</section>

@@ -1,0 +1,16 @@
+---
+// Iconos de Lucide (ISC). Solo se incrusta en el HTML el SVG que se usa.
+import * as lucide from 'lucide-static';
+
+interface Props {
+	nombre: keyof typeof lucide;
+	class?: string;
+}
+
+const { nombre, class: clase = 'size-6' } = Astro.props;
+const svg = String(lucide[nombre])
+	.replace(/class="[^"]*"/, `class="${clase}" aria-hidden="true"`)
+	.replace(/ (width|height)="24"/g, '');
+---
+
+<Fragment set:html={svg} />
