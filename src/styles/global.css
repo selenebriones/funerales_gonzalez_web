@@ -1,1 +1,39 @@
 @import "tailwindcss";
+@import "@fontsource-variable/nunito-sans";
+@import "@fontsource-variable/lora";
+
+/*
+ * Identidad visual de Funerales González.
+ * Colores extraídos de la web actual (funeralesgonzalez.com) y del logo.
+ * Tipografía: la web actual usa Avenir Heavy (licencia comercial);
+ * Nunito Sans es la alternativa libre más cercana. Lora (serif) para titulares.
+ */
+@theme {
+	/* Marca */
+	--color-marca: #634e3c;        /* marrón del logo */
+	--color-oro: #ad760e;          /* ocre/dorado: cabecera, acentos */
+	--color-oro-oscuro: #80490a;   /* marrón cálido: pie, enlaces, bordes */
+	--color-ciruela: #281a39;      /* morado profundo: titulares y texto fuerte */
+
+	/* Neutros */
+	--color-lavanda: #e9e6eb;      /* fondos suaves de sección */
+	--color-humo: #f6f6f6;         /* fondo general */
+	--color-tinta: #2b2530;        /* texto de cuerpo */
+
+	--font-serif: "Lora Variable", Georgia, ui-serif, serif;
+	--font-sans: "Nunito Sans Variable", "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+	html {
+		@apply bg-humo font-sans text-tinta;
+	}
+
+	h1, h2, h3, h4 {
+		@apply font-serif font-semibold text-ciruela;
+	}
+
+	a {
+		@apply text-oro-oscuro;
+	}
+}

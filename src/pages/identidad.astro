@@ -1,0 +1,56 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import logo from '../assets/brand/logo-funerales-gonzalez.png';
+
+const colores = [
+	{ nombre: 'marca', hex: '#634E3C', uso: 'Marrón del logo' },
+	{ nombre: 'oro', hex: '#AD760E', uso: 'Cabecera y acentos' },
+	{ nombre: 'oro-oscuro', hex: '#80490A', uso: 'Pie, enlaces y bordes' },
+	{ nombre: 'ciruela', hex: '#281A39', uso: 'Titulares y texto fuerte' },
+	{ nombre: 'lavanda', hex: '#E9E6EB', uso: 'Fondos de sección' },
+	{ nombre: 'humo', hex: '#F6F6F6', uso: 'Fondo general' },
+	{ nombre: 'tinta', hex: '#2B2530', uso: 'Texto de cuerpo' },
+];
+---
+
+<Layout title="Identidad visual · Funerales González">
+	<main class="mx-auto max-w-5xl px-4 py-16">
+		<Image src={logo} alt="Funerales González" class="h-auto w-72" />
+
+		<h1 class="mt-12 text-4xl">Identidad visual</h1>
+		<p class="mt-2 text-marca">Tokens extraídos de la web actual, disponibles como clases de Tailwind (<code>bg-oro</code>, <code>text-ciruela</code>…).</p>
+
+		<h2 class="mt-12 text-2xl">Colores</h2>
+		<ul class="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+			{colores.map((c) => (
+				<li class="overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-black/5">
+					<div class="h-24" style={`background:${c.hex}`} />
+					<div class="p-3 text-sm">
+						<p class="font-bold text-ciruela">{c.nombre}</p>
+						<p class="font-mono text-xs">{c.hex}</p>
+						<p class="mt-1 text-marca">{c.uso}</p>
+					</div>
+				</li>
+			))}
+		</ul>
+
+		<h2 class="mt-12 text-2xl">Tipografía · Lora + Nunito Sans</h2>
+		<div class="mt-6 space-y-4 rounded-lg bg-white p-8 shadow-sm ring-1 ring-black/5">
+			<p class="font-serif text-5xl font-semibold text-ciruela">Bienvenidos</p>
+			<p class="font-serif text-2xl text-ciruela">Una institución creada para servirle desde 1945</p>
+			<p class="max-w-prose">Ya sea que esté buscando información sobre la planificación anticipada o ayuda con arreglos funerarios, esperamos que encuentre lo que necesita en Funerales González.</p>
+			<p class="text-xs tracking-widest uppercase">Empresa · Servicios · Beneficios · Obituario · Contacto</p>
+		</div>
+
+		<h2 class="mt-12 text-2xl">Aplicación</h2>
+		<div class="mt-6 overflow-hidden rounded-lg shadow-sm ring-1 ring-black/5">
+			<div class="bg-oro px-6 py-4 text-sm font-semibold tracking-widest text-white uppercase">Cabecera / acento</div>
+			<div class="bg-lavanda px-6 py-8">
+				<a href="#" class="inline-block rounded-md bg-oro-oscuro px-5 py-2.5 font-semibold text-white hover:bg-marca">Contáctenos</a>
+				<a href="#" class="ml-4 font-semibold underline">Enlace de texto</a>
+			</div>
+			<div class="bg-oro-oscuro px-6 py-4 text-sm text-white">© Previsiones González, S.A. de C.V.</div>
+		</div>
+	</main>
+</Layout>

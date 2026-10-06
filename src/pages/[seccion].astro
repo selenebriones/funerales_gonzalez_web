@@ -1,0 +1,20 @@
+---
+// Páginas provisionales para las secciones del menú; se irán sustituyendo por páginas reales.
+import Layout from '../layouts/Layout.astro';
+import { navegacion } from '../data/sitio';
+
+export function getStaticPaths() {
+	return navegacion
+		.filter((item) => item.href !== '/')
+		.map((item) => ({ params: { seccion: item.href.slice(1) }, props: { titulo: item.texto } }));
+}
+
+const { titulo } = Astro.props;
+---
+
+<Layout title={`${titulo} · Funerales González`}>
+	<main class="mx-auto max-w-3xl px-4 py-24 text-center">
+		<h1 class="text-4xl">{titulo}</h1>
+		<p class="mt-4 text-marca">Sección en construcción.</p>
+	</main>
+</Layout>

@@ -1,5 +1,7 @@
 ---
 import '../styles/global.css';
+import BarraContactoMovil from '../components/BarraContactoMovil.astro';
+import Header from '../components/Header.astro';
 
 interface Props {
 	title?: string;
@@ -8,12 +10,12 @@ interface Props {
 
 const {
 	title = 'Funerales González',
-	description = 'Funerales González',
+	description = 'Funerales González, una institución creada para servirle desde 1945 en Monterrey.',
 } = Astro.props;
 ---
 
 <!doctype html>
-<html lang="es">
+<html lang="es-MX">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -23,7 +25,9 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="min-h-screen bg-white text-slate-800 antialiased">
+	<body class="min-h-screen pb-[calc(3.5rem+env(safe-area-inset-bottom))] antialiased md:pb-0">
+		<Header />
 		<slot />
+		<BarraContactoMovil />
 	</body>
 </html>
