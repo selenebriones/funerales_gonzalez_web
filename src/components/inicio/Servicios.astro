@@ -3,28 +3,25 @@ import Icono from '../Icono.astro';
 import TituloSeccion from '../TituloSeccion.astro';
 
 const servicios = [
-	{ icono: 'Cross', titulo: 'Servicio tradicional / Inhumación', texto: 'Acompañamiento completo para velación e inhumación, con atención personalizada en cada detalle.', ancla: 'inhumacion' },
-	{ icono: 'Flame', titulo: 'Cremación con velación', texto: 'Cremación precedida por una velación tradicional, para despedirse con calma.', ancla: 'cremacion-con-velacion' },
-	{ icono: 'Sunrise', titulo: 'Cremación directa', texto: 'Un proceso sencillo y ágil para familias que buscan una opción práctica.', ancla: 'cremacion-directa' },
-	{ icono: 'Plane', titulo: 'Traslados nacionales e internacionales', texto: 'Traslado terrestre o aéreo, con todos los trámites y la documentación incluidos.', ancla: 'traslados' },
-	{ icono: 'HeartHandshake', titulo: 'Recepción de restos', texto: 'Recibimos y atendemos a tu ser querido cuando llega de otra ciudad o país.', ancla: 'recepcion-de-restos' },
-	{ icono: 'ShieldCheck', titulo: 'Crematorio propio', texto: 'No subcontratamos: garantizamos control, seguridad y seguimiento directo del proceso.', ancla: 'crematorio-propio' },
+	{ icono: 'Cross', titulo: 'Servicio tradicional / Inhumación', ancla: 'inhumacion' },
+	{ icono: 'Flame', titulo: 'Cremación con velación', ancla: 'cremacion-con-velacion' },
+	{ icono: 'Sunrise', titulo: 'Cremación directa', ancla: 'cremacion-directa' },
+	{ icono: 'Plane', titulo: 'Traslados nacionales e internacionales', ancla: 'traslados' },
+	{ icono: 'HeartHandshake', titulo: 'Recepción de restos', ancla: 'recepcion-de-restos' },
+	{ icono: 'ShieldCheck', titulo: 'Crematorio propio', ancla: 'crematorio-propio' },
 ] as const;
 ---
 
-<section class="bg-humo py-20 sm:py-24">
+<section class="bg-marfil py-20 sm:py-24">
 	<div class="mx-auto max-w-7xl px-4">
 		<TituloSeccion antetitulo="Servicios funerarios" titulo="Servicios pensados para acompañarte en cada decisión" centrado />
 
 		<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{servicios.map((s) => (
 				<li>
-					<a href={`/servicios#${s.ancla}`} class="group flex h-full flex-col rounded-xl bg-white p-7 shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md">
-						<span class="grid size-14 place-items-center rounded-full bg-lavanda text-ciruela transition group-hover:bg-oro-oscuro group-hover:text-white">
-							<Icono nombre={s.icono} class="size-7" />
-						</span>
-						<h3 class="mt-5 text-xl">{s.titulo}</h3>
-						<p class="mt-2 flex-1 text-tinta/80">{s.texto}</p>
+					<a href={`/servicios#${s.ancla}`} class="group flex h-full flex-col items-center rounded-xl bg-white px-7 py-10 text-center shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-oro-oscuro">
+						<Icono nombre={s.icono} class="size-20 stroke-[0.75] text-ciruela transition group-hover:text-oro-oscuro" />
+						<h3 class="mt-6 flex-1 text-xl text-balance">{s.titulo}</h3>
 						<span class="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-oro-oscuro">
 							Ver detalles <Icono nombre="ArrowRight" class="size-4 transition group-hover:translate-x-1" />
 						</span>

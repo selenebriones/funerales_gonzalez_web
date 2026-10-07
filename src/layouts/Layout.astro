@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import BarraContactoMovil from '../components/BarraContactoMovil.astro';
+import BotonesContactoFlotantes from '../components/BotonesContactoFlotantes.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 
@@ -26,10 +26,10 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>
-	<body class="min-h-screen pb-[calc(3.5rem+env(safe-area-inset-bottom))] antialiased md:pb-0">
+	<body class="min-h-screen antialiased">
 		<Header />
 		<slot />
 		<Footer />
-		<BarraContactoMovil />
+		<BotonesContactoFlotantes />
 	</body>
 </html>

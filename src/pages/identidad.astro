@@ -1,7 +1,8 @@
 ---
 import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
-import logo from '../assets/brand/logo-funerales-gonzalez.png';
+import logoColor from '../assets/brand/logo-color.webp';
+import logoBlanco from '../assets/brand/logo-blanco.webp';
 
 const colores = [
 	{ nombre: 'marca', hex: '#634E3C', uso: 'Marrón del logo' },
@@ -10,13 +11,22 @@ const colores = [
 	{ nombre: 'ciruela', hex: '#281A39', uso: 'Titulares y texto fuerte' },
 	{ nombre: 'lavanda', hex: '#E9E6EB', uso: 'Fondos de sección' },
 	{ nombre: 'humo', hex: '#F6F6F6', uso: 'Fondo general' },
+	{ nombre: 'marfil', hex: '#F7F6F4', uso: 'Fondo de servicios y sucursales' },
+	{ nombre: 'whatsapp', hex: '#1F7A4D', uso: 'Botones de WhatsApp' },
 	{ nombre: 'tinta', hex: '#2B2530', uso: 'Texto de cuerpo' },
 ];
 ---
 
 <Layout title="Identidad visual · Funerales González">
 	<main class="mx-auto max-w-5xl px-4 py-16">
-		<Image src={logo} alt="Funerales González" class="h-auto w-72" />
+		<div class="grid gap-4 sm:grid-cols-2">
+			<div class="grid place-items-center rounded-lg bg-white p-8 shadow-sm ring-1 ring-black/5">
+				<Image src={logoColor} alt="Logo en color" class="h-auto w-64" />
+			</div>
+			<div class="grid place-items-center rounded-lg bg-ciruela p-8">
+				<Image src={logoBlanco} alt="Logo en blanco" class="h-auto w-64" />
+			</div>
+		</div>
 
 		<h1 class="mt-12 text-4xl">Identidad visual</h1>
 		<p class="mt-2 text-marca">Tokens extraídos de la web actual, disponibles como clases de Tailwind (<code>bg-oro</code>, <code>text-ciruela</code>…).</p>

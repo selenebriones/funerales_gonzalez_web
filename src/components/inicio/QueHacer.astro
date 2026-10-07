@@ -1,5 +1,6 @@
 ---
 import Icono from '../Icono.astro';
+import IconoWhatsApp from '../IconoWhatsApp.astro';
 import TituloSeccion from '../TituloSeccion.astro';
 import { sitio } from '../../data/sitio';
 
@@ -23,18 +24,19 @@ const pasos = [
 				<a href={sitio.telefono.href} class="inline-flex items-center gap-2 rounded-md bg-oro-oscuro px-5 py-3 font-bold text-white hover:bg-marca">
 					<Icono nombre="Phone" class="size-5" /> Llamar ahora
 				</a>
-				<a href={sitio.whatsapp.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-md px-5 py-3 font-bold text-oro-oscuro ring-1 ring-oro-oscuro/40 ring-inset hover:bg-humo">
-					<Icono nombre="MessageCircle" class="size-5" /> WhatsApp
+				<a href={sitio.whatsapp.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-md bg-whatsapp px-5 py-3 font-bold text-white transition hover:bg-whatsapp-oscuro">
+					<IconoWhatsApp class="size-5" /> WhatsApp
 				</a>
 			</div>
 		</div>
 
-		<ol class="space-y-4">
+		<!-- pl-6 deja espacio para la mitad del círculo que sobresale del borde -->
+		<ol class="space-y-4 pl-6">
 			{pasos.map((paso, i) => (
-				<li class="flex gap-5 rounded-xl bg-humo p-6">
-					<span class="grid size-12 shrink-0 place-items-center rounded-full bg-white font-serif text-xl font-semibold text-oro-oscuro ring-1 ring-oro/30">{i + 1}</span>
+				<li class="relative rounded-xl bg-marfil py-6 pr-6 pl-12">
+					<span class="absolute top-1/2 left-0 grid size-12 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-ciruela font-serif text-xl font-semibold text-white ring-4 ring-white">{i + 1}</span>
 					<div>
-						<h3 class="text-xl">{paso.titulo}</h3>
+						<h3 class="text-xl text-oro-oscuro">{paso.titulo}</h3>
 						<p class="mt-1.5 text-tinta/80">{paso.texto}</p>
 					</div>
 				</li>

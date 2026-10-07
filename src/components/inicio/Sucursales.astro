@@ -7,7 +7,7 @@ const tel = (t: string) => `tel:+52${t.replace(/\D/g, '')}`;
 ---
 
 <!-- TODO: mapa con las 4 ubicaciones (nota del documento de contenido) -->
-<section class="bg-lavanda py-20 sm:py-24">
+<section class="bg-marfil py-20 sm:py-24">
 	<div class="mx-auto max-w-7xl px-4">
 		<TituloSeccion antetitulo="Sucursales" titulo="Cerca de ti en Monterrey y la región" centrado />
 
@@ -28,15 +28,15 @@ const tel = (t: string) => `tel:+52${t.replace(/\D/g, '')}`;
 							</li>
 						))}
 					</ul>
-					<a href={s.mapa} target="_blank" rel="noopener" class="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-oro-oscuro hover:text-marca">
-						Cómo llegar <Icono nombre="ArrowRight" class="size-4" />
+					<a href={s.mapa} target="_blank" rel="noopener" class="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-oro-oscuro px-4 py-3 font-bold text-white transition hover:bg-marca">
+						<Icono nombre="Map" class="size-5" /> Ver mapa
 					</a>
 				</li>
 			))}
 		</ul>
 
 		<p class="mt-10 text-center">
-			<a href="/sucursales" class="font-bold text-oro-oscuro hover:text-marca">Ver instalaciones y servicios de cada sucursal</a>
+			<a href="/sucursales" class="group inline-flex items-center gap-2 font-bold text-oro-oscuro hover:text-marca">Ver instalaciones y servicios de cada sucursal <Icono nombre="ArrowRight" class="size-5 transition group-hover:translate-x-1" /></a>
 		</p>
 	</div>
 </section>

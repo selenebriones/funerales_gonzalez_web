@@ -1,11 +1,20 @@
 ---
-import Icono from '../Icono.astro';
-import { sitio } from '../../data/sitio';
+import IconoWhatsApp from '../IconoWhatsApp.astro';
+import { sitio, whatsappCon } from '../../data/sitio';
 ---
 
 <section class="relative isolate overflow-hidden bg-ciruela text-white">
-	<!-- Luz cálida de fondo; se sustituirá por fotografía real de las instalaciones -->
-	<div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_20%,rgb(173_118_14/0.35),transparent_60%),radial-gradient(ellipse_at_10%_90%,rgb(99_78_60/0.6),transparent_55%)]"></div>
+	<!-- Fotografía de apoyo; se sustituirá por fotografía real de las instalaciones -->
+	<img
+		src="/pareja_abrazada.webp"
+		alt=""
+		width="1264"
+		height="843"
+		fetchpriority="high"
+		class="absolute inset-0 -z-20 size-full object-cover object-[50%_30%]"
+	/>
+	<!-- Velo ciruela con luz cálida para que el texto se lea sobre la foto -->
+	<div class="absolute inset-0 -z-10 bg-ciruela/75 bg-[radial-gradient(ellipse_at_70%_20%,rgb(173_118_14/0.35),transparent_60%),radial-gradient(ellipse_at_10%_90%,rgb(99_78_60/0.6),transparent_55%)]"></div>
 
 	<div class="mx-auto max-w-4xl px-4 py-20 text-center sm:py-28 lg:py-32">
 		<p class="flex items-center justify-center gap-3 text-sm font-bold tracking-[0.25em] text-oro-claro uppercase">
@@ -22,12 +31,12 @@ import { sitio } from '../../data/sitio';
 
 		<div class="mt-10 flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center">
 			<a
-				href={sitio.whatsapp.href}
+				href={whatsappCon('Perdí a un familiar, me puedes ayudar.')}
 				target="_blank"
 				rel="noopener"
 				class="inline-flex items-center justify-center gap-2 rounded-md bg-oro-claro px-7 py-4 text-lg font-bold text-ciruela shadow-lg transition hover:bg-white"
 			>
-				<Icono nombre="MessageCircle" class="size-5" />
+				<IconoWhatsApp class="size-5" />
 				Perdí a un familiar
 			</a>
 			<a

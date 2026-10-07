@@ -1,13 +1,19 @@
 // Datos de contacto y navegación compartidos por todo el sitio.
 // Fuente: documento de contenido (Google Sites). TODO: confirmar número de WhatsApp con el cliente.
 
+const whatsappNumero = '528118072578';
+
+/** Enlace de WhatsApp con un mensaje ya escrito. */
+export const whatsappCon = (mensaje: string) =>
+	`https://wa.me/${whatsappNumero}?text=${encodeURIComponent(mensaje)}`;
+
 export const sitio = {
 	nombre: 'Funerales González',
 	lema: 'Una institución creada para servirle desde 1945',
 	telefono: { mostrar: '(81) 8346 4121', href: 'tel:+528183464121' },
 	whatsapp: {
 		mostrar: '81 1807 2578',
-		href: 'https://wa.me/528118072578?text=Hola%2C%20necesito%20informaci%C3%B3n',
+		href: whatsappCon('Hola, necesito información'),
 	},
 	facebook: 'https://www.facebook.com/FuneralesGonzalezOficial',
 	razonSocial: 'Previsiones González, S.A. de C.V.',

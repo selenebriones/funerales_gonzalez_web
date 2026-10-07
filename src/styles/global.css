@@ -16,9 +16,14 @@
 	--color-ciruela: #281a39;      /* morado profundo: titulares y texto fuerte */
 	--color-oro-claro: #d9b46c;    /* dorado claro: acentos sobre fondos oscuros */
 
+	/* Botones de WhatsApp (verde con contraste suficiente para texto blanco) */
+	--color-whatsapp: #1f7a4d;
+	--color-whatsapp-oscuro: #17603c;
+
 	/* Neutros */
 	--color-lavanda: #e9e6eb;      /* fondos suaves de sección */
 	--color-humo: #f6f6f6;         /* fondo general */
+	--color-marfil: #f7f6f4;       /* blanco cálido: fondo de servicios y sucursales */
 	--color-tinta: #2b2530;        /* texto de cuerpo */
 
 	--font-serif: "Lora Variable", Georgia, ui-serif, serif;
