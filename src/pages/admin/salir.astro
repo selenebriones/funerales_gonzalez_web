@@ -1,0 +1,7 @@
+---
+import { cerrarSesion } from '../../lib/sesion';
+
+export const prerender = false;
+cerrarSesion(Astro.cookies);
+return Astro.redirect('/admin/entrar');
+---

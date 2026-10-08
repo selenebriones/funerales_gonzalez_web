@@ -1,0 +1,191 @@
+---
+// Admin de flores: categorías (crear, renombrar, borrar) y sus arreglos (agregar, editar, borrar).
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import HeroInterior from '../../components/HeroInterior.astro';
+import Icono from '../../components/Icono.astro';
+import BotonAgregar from '../../components/admin/BotonAgregar.astro';
+import CampoImagen from '../../components/admin/CampoImagen.astro';
+import Dialogo from '../../components/admin/Dialogo.astro';
+import DialogoBorrar from '../../components/admin/DialogoBorrar.astro';
+import DialogoGrupo from '../../components/admin/DialogoGrupo.astro';
+import FilaAdmin from '../../components/admin/FilaAdmin.astro';
+import MenuDesplegable from '../../components/admin/MenuDesplegable.astro';
+import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
+import Obligatorio from '../../components/admin/Obligatorio.astro';
+import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
+import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
+import { pesos } from '../../data/planes';
+import { borrarImagen, guardarFlores, guardarImagen, leerFlores } from '../../lib/almacen';
+import { avisoBorrarGrupo, avisoDe, ErrorAdmin, imagen, nuevoId, obligatorio, texto } from '../../lib/formulario';
+
+export const prerender = false;
+
+const categorias = await leerFlores(true);
+let error = '';
+
+if (Astro.request.method === 'POST') {
+	const datos = await Astro.request.formData();
+	const grupo = texto(datos, 'grupo');
+	const categoria = categorias.find((c) => c.id === grupo);
+	let fotoNueva: string | undefined;
+	try {
+		let aviso = 'guardado';
+		let ancla = grupo;
+		let ver = ''; // renglón guardado: el paginador abre la página donde quedó
+		const fotosABorrar: (string | undefined)[] = [];
+		const accion = texto(datos, 'accion');
+		if (accion !== 'crear-grupo' && !categoria) throw new ErrorAdmin('No se encontró la categoría. Recarga la página e intenta de nuevo.');
+
+		switch (accion) {
+			case 'crear-grupo': {
+				ancla = nuevoId();
+				categorias.push({ id: ancla, categoria: obligatorio(datos, 'nombre', 'el nombre'), arreglos: [] });
+				aviso = 'categoria-creada';
+				break;
+			}
+			case 'renombrar': {
+				categoria!.categoria = obligatorio(datos, 'nombre', 'el nombre');
+				break;
+			}
+			case 'borrar-grupo': {
+				categorias.splice(categorias.indexOf(categoria!), 1);
+				fotosABorrar.push(...categoria!.arreglos.map((a) => a.foto));
+				ancla = '';
+				aviso = 'grupo-borrado';
+				break;
+			}
+			case 'guardar': {
+				const id = texto(datos, 'id');
+				const existente = categoria!.arreglos.find((a) => a.id === id);
+				if (id && !existente) throw new ErrorAdmin('No se encontró el arreglo. Recarga la página e intenta de nuevo.');
+				const precio = Number(obligatorio(datos, 'precio', 'el precio'));
+				if (!Number.isFinite(precio) || precio < 0) throw new ErrorAdmin('El precio debe ser un número.');
+				const cambios = { nombre: obligatorio(datos, 'nombre', 'el nombre'), precio };
+				const archivo = imagen(datos);
+				if (archivo) fotoNueva = await guardarImagen(archivo, 'flores');
+				ver = existente?.id ?? nuevoId();
+				if (existente) {
+					if (fotoNueva) fotosABorrar.push(existente.foto);
+					Object.assign(existente, cambios, { foto: fotoNueva ?? existente.foto });
+				} else {
+					categoria!.arreglos.push({ id: ver, ...cambios, foto: fotoNueva });
+					aviso = 'agregado';
+				}
+				break;
+			}
+			case 'borrar': {
+				const i = categoria!.arreglos.findIndex((a) => a.id === texto(datos, 'id'));
+				if (i < 0) throw new ErrorAdmin('No se encontró el arreglo.');
+				fotosABorrar.push(categoria!.arreglos.splice(i, 1)[0].foto);
+				aviso = 'borrado';
+				break;
+			}
+			default:
+				throw new ErrorAdmin('Acción no válida.');
+		}
+
+		await guardarFlores(categorias);
+		await Promise.all(fotosABorrar.map(borrarImagen));
+		return Astro.redirect(`/admin/flores?aviso=${aviso}${ver ? `&ver=${ver}` : ''}${ancla ? `#${ancla}` : ''}`, 303);
+	} catch (e) {
+		await borrarImagen(fotoNueva);
+		if (!(e instanceof ErrorAdmin)) console.error(e);
+		error = e instanceof ErrorAdmin ? e.message : 'No se pudieron guardar los cambios. Intenta de nuevo.';
+		Astro.response.status = 400;
+	}
+}
+
+const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.url);
+---
+
+<AdminLayout title="Flores" paginaPublica="/flores" aviso={aviso}>
+	<main>
+		<HeroInterior antetitulo="Administrar" titulo="Flores">
+			<p class="mt-4 max-w-2xl text-white/85">Crea, renombra o borra categorías y agrega, edita o borra arreglos. Lo que guardes aparece en la página de flores.</p>
+		</HeroInterior>
+
+		<!-- Se ve una categoría a la vez; la flecha junto al nombre cambia a otra -->
+		<div data-seccion id="categorias">
+		{categorias.map((c) => (
+			<section id={c.id} class="scroll-mt-8 bg-white py-16 sm:py-20" data-grupo>
+				<div class="mx-auto max-w-5xl px-4">
+					<div class="flex flex-wrap items-center gap-x-5 gap-y-3">
+						<MenuDesplegable titulo={c.categoria} actual={c.id} opciones={categorias.map((o) => ({ id: o.id, texto: o.categoria }))} />
+						<button
+							type="button"
+							class="flex items-center gap-1.5 rounded-md bg-marca px-4 py-2 text-sm font-bold text-white transition hover:bg-oro-oscuro"
+							data-abrir="dialogo-grupo"
+							data-titulo="Editar la categoría"
+							data-valores={JSON.stringify({
+								accion: 'renombrar',
+								grupo: c.id,
+								nombre: c.categoria,
+								tituloNueva: 'Nueva categoría de flores',
+								tituloBorrar: `¿Seguro que deseas borrar «${c.categoria}»?`,
+								avisoBorrar: avisoBorrarGrupo(c.arreglos.length, 'la categoría'),
+							})}
+						>
+							<Icono nombre="Pencil" class="size-4" /> Editar
+						</button>
+					</div>
+					<BotonAgregar texto="Agregar arreglo" dialogo="dialogo-arreglo" valores={{ grupo: c.id, id: '' }} class="mt-6" />
+					<ul class="mt-3 grid gap-3" data-paginar>
+						{c.arreglos.map((a) => (
+							<FilaAdmin
+								nombre={a.nombre}
+								foto={a.foto}
+								nota={pesos(a.precio)}
+								editar={{
+									dialogo: 'dialogo-arreglo',
+									titulo: 'Editar arreglo',
+									valores: { grupo: c.id, id: a.id, nombre: a.nombre, precio: a.precio, foto: a.foto },
+								}}
+								borrar={{ grupo: c.id, id: a.id }}
+							/>
+						))}
+					</ul>
+				</div>
+			</section>
+		))}
+		</div>
+
+		<!-- Las categorías nuevas se crean desde "Editar"; este botón solo aparece si no queda ninguna -->
+		{categorias.length === 0 && (
+			<section class="bg-white py-16">
+				<div class="mx-auto max-w-5xl px-4">
+					<BotonAgregar
+						texto="Agregar categoría"
+						titulo="Nueva categoría de flores"
+						dialogo="dialogo-grupo"
+						valores={{ accion: 'crear-grupo', grupo: '', nombre: '' }}
+						descripcion="Crea una nueva sección de flores con sus propios arreglos."
+					/>
+				</div>
+			</section>
+		)}
+	</main>
+
+	<DialogoGrupo antetitulo="Categoría de flores" queEs="la categoría" nueva="nueva categoría" />
+	<DialogoBorrar />
+
+	<Dialogo id="dialogo-arreglo" antetitulo="Flores">
+		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
+			<input type="hidden" name="accion" value="guardar" />
+			<input type="hidden" name="grupo" />
+			<input type="hidden" name="id" />
+			<NotaObligatorios />
+			<label class={etiqueta}>
+				<span>Nombre <Obligatorio /></span>
+				<input name="nombre" required maxlength="120" class={campo} />
+			</label>
+			<CampoImagen />
+			<label class={etiqueta}>
+				<span>Precio (MXN) <Obligatorio /></span>
+				<input name="precio" type="number" required min="0" step="1" inputmode="numeric" class={campo} />
+			</label>
+			<button type="submit" class:list={[botonGuardar, 'mt-1']}>Guardar</button>
+		</form>
+	</Dialogo>
+
+	<ScriptAdmin />
+</AdminLayout>

@@ -1,15 +1,15 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Carrusel from '../components/Carrusel.astro';
 import HeroInterior from '../components/HeroInterior.astro';
+import LineasDeProductos from '../components/LineasDeProductos.astro';
 import Separador from '../components/Separador.astro';
-import TarjetaProducto from '../components/TarjetaProducto.astro';
 import TituloSeccion from '../components/TituloSeccion.astro';
-import { lineasDeAtaudes, urnas, type Producto } from '../data/catalogo';
+import { leerCatalogo } from '../lib/almacen';
 
-// Los modelos con foto van primero para que ningún carrusel abra con la cruz de respaldo;
-// dentro de cada grupo se respeta el orden del documento.
-const conFotoPrimero = (productos: Producto[]) => [...productos].sort((a, b) => Number(!!b.foto) - Number(!!a.foto));
+// Se arma en cada visita porque el contenido se edita desde el admin.
+export const prerender = false;
+const { lineas, urnas } = await leerCatalogo();
+const hay = (l: typeof lineas) => l.some((x) => x.productos.length);
 ---
 
 <Layout
@@ -20,48 +20,24 @@ const conFotoPrimero = (productos: Producto[]) => [...productos].sort((a, b) => 
 		<HeroInterior antetitulo="Catálogo de ataúdes y urnas" titulo="Opciones pensadas para honrar a quien amaste, sin presión de decidir solo." />
 
 		<!-- Ataúdes -->
-		<section id="ataudes" class="scroll-mt-8 bg-white py-20 sm:py-24">
-			<div class="mx-auto max-w-7xl px-4">
-				<TituloSeccion titulo="Ataúdes" centrado />
-
-				<div class="mt-14 space-y-16">
-					{lineasDeAtaudes.map((grupo) => (
-						<div>
-							<h3 class="text-2xl sm:text-3xl">{grupo.linea}</h3>
-							<div class="mt-6">
-								{grupo.productos.length > 3 ? (
-									<Carrusel etiqueta={grupo.linea}>
-										{conFotoPrimero(grupo.productos).map((producto) => (
-											<li><TarjetaProducto producto={producto} tipo="ataúd" /></li>
-										))}
-									</Carrusel>
-								) : (
-									<ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-										{conFotoPrimero(grupo.productos).map((producto) => (
-											<li><TarjetaProducto producto={producto} tipo="ataúd" /></li>
-										))}
-									</ul>
-								)}
-							</div>
-						</div>
-					))}
+		{hay(lineas) && (
+			<section id="ataudes" class="scroll-mt-8 bg-white py-20 sm:py-24">
+				<div class="mx-auto max-w-7xl px-4">
+					<TituloSeccion titulo="Ataúdes" centrado />
+					<LineasDeProductos lineas={lineas} tipo="ataúd" />
 				</div>
-			</div>
-		</section>
+			</section>
+		)}
 
 		<!-- Urnas -->
-		<section id="urnas" class="relative scroll-mt-8 bg-marfil py-20 sm:py-24">
-			<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
-			<div class="mx-auto max-w-7xl px-4">
-				<TituloSeccion titulo="Urnas" centrado />
-				<div class="mt-14">
-					<Carrusel etiqueta="Urnas">
-						{conFotoPrimero(urnas).map((producto) => (
-							<li><TarjetaProducto producto={producto} tipo="urna" /></li>
-						))}
-					</Carrusel>
+		{hay(urnas) && (
+			<section id="urnas" class="relative scroll-mt-8 bg-marfil py-20 sm:py-24">
+				<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
+				<div class="mx-auto max-w-7xl px-4">
+					<TituloSeccion titulo="Urnas" centrado />
+					<LineasDeProductos lineas={urnas} tipo="urna" />
 				</div>
-			</div>
-		</section>
+			</section>
+		)}
 	</main>
 </Layout>

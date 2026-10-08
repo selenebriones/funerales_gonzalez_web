@@ -1,0 +1,240 @@
+---
+// Admin de obituarios: publicar, editar y borrar. Los nuevos se agregan al inicio (los más recientes primero).
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import HeroInterior from '../../components/HeroInterior.astro';
+import BotonAgregar from '../../components/admin/BotonAgregar.astro';
+import Icono from '../../components/Icono.astro';
+import CampoImagen from '../../components/admin/CampoImagen.astro';
+import CampoMomento from '../../components/admin/CampoMomento.astro';
+import Dialogo from '../../components/admin/Dialogo.astro';
+import DialogoBorrar from '../../components/admin/DialogoBorrar.astro';
+import FilaAdmin from '../../components/admin/FilaAdmin.astro';
+import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
+import Obligatorio from '../../components/admin/Obligatorio.astro';
+import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
+import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
+import { anio, textoMomento, type Momento, type Obituario } from '../../data/obituarios';
+import { sucursales } from '../../data/sitio';
+import { borrarImagen, guardarImagen, guardarObituarios, leerObituarios } from '../../lib/almacen';
+import { avisoDe, ErrorAdmin, imagen, nuevoId, obligatorio, texto } from '../../lib/formulario';
+
+export const prerender = false;
+
+const obituarios = await leerObituarios(true);
+let error = '';
+
+const dos = (n: number) => String(n).padStart(2, '0');
+
+function hora(datos: FormData, prefijo: string, que: string) {
+	const h = Number(obligatorio(datos, `${prefijo}Hora`, `la hora de ${que}`));
+	const m = Number(obligatorio(datos, `${prefijo}Minuto`, `los minutos de ${que}`));
+	if (!(Number.isInteger(h) && h >= 0 && h <= 23 && Number.isInteger(m) && m >= 0 && m <= 59)) throw new ErrorAdmin(`La hora de ${que} no es válida.`);
+	return `${dos(h)}:${dos(m)}`;
+}
+
+function momento(datos: FormData, prefijo: string, que: string): Momento {
+	const dia = Number(obligatorio(datos, `${prefijo}Dia`, `el día de ${que}`));
+	const mes = Number(obligatorio(datos, `${prefijo}Mes`, `el mes de ${que}`));
+	// 2024 es bisiesto: así se acepta el 29 de febrero.
+	if (new Date(2024, mes - 1, dia).getMonth() !== mes - 1) throw new ErrorAdmin(`La fecha de ${que} no existe.`);
+	return { dia, mes, hora: hora(datos, prefijo, que) };
+}
+
+function fecha(datos: FormData, nombre: string, que: string) {
+	const valor = obligatorio(datos, nombre, `la fecha de ${que}`);
+	if (!/^\d{4}-\d{2}-\d{2}$/.test(valor)) throw new ErrorAdmin(`La fecha de ${que} no es válida.`);
+	return valor;
+}
+
+function leerFormulario(datos: FormData): Omit<Obituario, 'id' | 'foto'> {
+	const nacimiento = fecha(datos, 'nacimiento', 'nacimiento');
+	const fallecimiento = fecha(datos, 'fallecimiento', 'fallecimiento');
+	if (nacimiento > fallecimiento) throw new ErrorAdmin('La fecha de nacimiento es posterior a la de fallecimiento.');
+
+	const capilla = obligatorio(datos, 'capilla', 'la capilla');
+	if (!sucursales.some((s) => s.nombre === capilla)) throw new ErrorAdmin('La capilla no es válida.');
+
+	const ubicacion = texto(datos, 'ubicacion');
+	if (ubicacion && !/^https?:\/\/\S+$/.test(ubicacion)) throw new ErrorAdmin('La ubicación debe ser un enlace que empiece con https://');
+
+	const iglesia = texto(datos, 'misaIglesia');
+	const conHoraDeMisa = texto(datos, 'misaHora') || texto(datos, 'misaMinuto');
+	if (!iglesia && conHoraDeMisa) throw new ErrorAdmin('Falta la iglesia de la misa (o deja la hora vacía).');
+
+	return {
+		nombre: obligatorio(datos, 'nombre', 'el nombre'),
+		nacimiento,
+		fallecimiento,
+		capilla,
+		sala: obligatorio(datos, 'sala', 'la sala'),
+		ubicacion: ubicacion || undefined,
+		inicio: momento(datos, 'inicio', 'inicio del servicio'),
+		partida: momento(datos, 'partida', 'la partida'),
+		misa: iglesia ? { iglesia, hora: hora(datos, 'misa', 'la misa') } : undefined,
+		despide: texto(datos, 'despide') || undefined,
+	};
+}
+
+if (Astro.request.method === 'POST') {
+	const datos = await Astro.request.formData();
+	let fotoNueva: string | undefined;
+	try {
+		let aviso = 'guardado';
+		let fotoAnterior: string | undefined;
+		let ver = ''; // obituario guardado: el paginador abre la página donde quedó
+		const id = texto(datos, 'id');
+		const existente = obituarios.find((o) => o.id === id);
+		if (id && !existente) throw new ErrorAdmin('No se encontró el obituario. Recarga la página e intenta de nuevo.');
+
+		switch (texto(datos, 'accion')) {
+			case 'guardar': {
+				const cambios = leerFormulario(datos);
+				const archivo = imagen(datos);
+				if (archivo) fotoNueva = await guardarImagen(archivo, 'obituarios');
+				ver = existente?.id ?? nuevoId();
+				if (existente) {
+					if (fotoNueva) fotoAnterior = existente.foto;
+					Object.assign(existente, cambios, { foto: fotoNueva ?? existente.foto });
+				} else {
+					obituarios.unshift({ id: ver, ...cambios, foto: fotoNueva });
+					aviso = 'agregado';
+				}
+				break;
+			}
+			case 'borrar': {
+				if (!existente) throw new ErrorAdmin('No se encontró el obituario.');
+				obituarios.splice(obituarios.indexOf(existente), 1);
+				fotoAnterior = existente.foto;
+				aviso = 'borrado';
+				break;
+			}
+			default:
+				throw new ErrorAdmin('Acción no válida.');
+		}
+
+		await guardarObituarios(obituarios);
+		await borrarImagen(fotoAnterior);
+		return Astro.redirect(`/admin/obituarios?aviso=${aviso}${ver ? `&ver=${ver}` : ''}`, 303);
+	} catch (e) {
+		await borrarImagen(fotoNueva);
+		if (!(e instanceof ErrorAdmin)) console.error(e);
+		error = e instanceof ErrorAdmin ? e.message : 'No se pudieron guardar los cambios. Intenta de nuevo.';
+		Astro.response.status = 400;
+	}
+}
+
+const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.url);
+
+// Valores planos para llenar el formulario al editar.
+const momentoPlano = (prefijo: string, m: Momento) => {
+	const [h, min] = m.hora.split(':');
+	return { [`${prefijo}Dia`]: m.dia, [`${prefijo}Mes`]: m.mes, [`${prefijo}Hora`]: h, [`${prefijo}Minuto`]: min };
+};
+const valoresDe = (o: Obituario) => ({
+	id: o.id,
+	nombre: o.nombre,
+	// El contenido inicial solo trae el año: el campo de fecha queda vacío para completarlo.
+	nacimiento: o.nacimiento.length === 10 ? o.nacimiento : '',
+	fallecimiento: o.fallecimiento.length === 10 ? o.fallecimiento : '',
+	capilla: o.capilla,
+	sala: o.sala,
+	ubicacion: o.ubicacion ?? '',
+	foto: o.foto,
+	...momentoPlano('inicio', o.inicio),
+	...momentoPlano('partida', o.partida),
+	misaIglesia: o.misa?.iglesia ?? '',
+	...(o.misa ? { misaHora: o.misa.hora.slice(0, 2), misaMinuto: o.misa.hora.slice(3) } : {}),
+	despide: o.despide ?? '',
+});
+---
+
+<AdminLayout title="Obituarios" paginaPublica="/obituarios" aviso={aviso}>
+	<main>
+		<HeroInterior antetitulo="Administrar" titulo="Obituarios">
+			<p class="mt-4 max-w-2xl text-white/85">Publica, edita o borra obituarios. Los nuevos aparecen primero en la página de obituarios.</p>
+		</HeroInterior>
+
+		<section class="bg-white py-16 sm:py-20">
+			<div class="mx-auto max-w-5xl px-4">
+				<BotonAgregar texto="Agregar obituario" titulo="Nuevo obituario" dialogo="dialogo-obituario" valores={{ id: '' }} class="py-6" />
+				<label class="mt-8 flex items-center gap-3 rounded-xl bg-humo px-4 py-1 ring-1 ring-black/10 focus-within:ring-oro-oscuro">
+					<Icono nombre="Search" class="size-5 shrink-0 text-oro-oscuro" />
+					<span class="sr-only">Buscar por nombre</span>
+					<input type="search" placeholder="Buscar por nombre" class="w-full bg-transparent py-2.5 text-tinta focus:outline-none" data-buscar="obituarios" />
+				</label>
+				<ul class="mt-4 grid gap-3" data-paginar="obituarios">
+					{obituarios.map((o) => (
+						<FilaAdmin
+							nombre={o.nombre}
+							foto={o.foto}
+							nota={`${anio(o.nacimiento)} – ${anio(o.fallecimiento)} · ${o.capilla} · ${o.sala} · Servicio: ${textoMomento(o.inicio)}`}
+							obituario
+							editar={{ dialogo: 'dialogo-obituario', titulo: 'Editar obituario', valores: valoresDe(o) }}
+							borrar={{ id: o.id }}
+						/>
+					))}
+				</ul>
+				{obituarios.length === 0 && <p class="mt-6 text-center text-tinta/70">Todavía no hay obituarios publicados.</p>}
+			</div>
+		</section>
+	</main>
+
+	<DialogoBorrar />
+
+	<Dialogo id="dialogo-obituario" antetitulo="Obituario">
+		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
+			<input type="hidden" name="accion" value="guardar" />
+			<input type="hidden" name="id" />
+			<NotaObligatorios />
+			<label class={etiqueta}>
+				<span>Nombre <Obligatorio /></span>
+				<input name="nombre" required maxlength="120" class={campo} />
+			</label>
+			<CampoImagen />
+			<div class="grid gap-4 sm:grid-cols-2">
+				<label class={etiqueta}>
+					<span>Fecha de nacimiento <Obligatorio /></span>
+					<input name="nacimiento" type="date" required class={campo} />
+				</label>
+				<label class={etiqueta}>
+					<span>Fecha de fallecimiento <Obligatorio /></span>
+					<input name="fallecimiento" type="date" required class={campo} />
+				</label>
+			</div>
+			<div class="grid gap-4 sm:grid-cols-2">
+				<label class:list={[etiqueta, 'min-w-0']}>
+					<span>Capilla <Obligatorio /></span>
+					<select name="capilla" required class:list={[campo, 'min-w-0']}>
+						<option value="">Elige una</option>
+						{sucursales.map((s) => <option>{s.nombre}</option>)}
+					</select>
+				</label>
+				<label class={etiqueta}>
+					<span>Sala <Obligatorio /></span>
+					<input name="sala" required maxlength="40" placeholder="Sala 1" class={campo} />
+				</label>
+			</div>
+			<label class={etiqueta}>
+				<span>Ubicación <span class="font-normal text-tinta/70">(opcional, enlace de Google Maps)</span></span>
+				<input name="ubicacion" type="url" maxlength="500" placeholder="https://maps.google.com/..." class={campo} />
+				<span class="text-xs font-normal text-tinta/70">Si lo dejas vacío, no aparece el botón "Ver ubicación".</span>
+			</label>
+			<CampoMomento prefijo="inicio" titulo="Inicio del servicio" obligatorio />
+			<CampoMomento prefijo="partida" titulo="Partida" obligatorio />
+			<div class="grid gap-3 rounded-xl bg-humo p-4">
+				<label class={etiqueta}>
+					<span>Misa <span class="font-normal text-tinta/70">(opcional)</span></span>
+					<input name="misaIglesia" maxlength="120" placeholder="Iglesia o parroquia" class={campo} />
+				</label>
+				<CampoMomento prefijo="misa" titulo="Hora de la misa" soloHora />
+			</div>
+			<label class={etiqueta}>
+				<span>Despide en <span class="font-normal text-tinta/70">(opcional)</span></span>
+				<input name="despide" maxlength="120" placeholder="Panteón, crematorio..." class={campo} />
+			</label>
+			<button type="submit" class:list={[botonGuardar, 'mt-1']}>Guardar</button>
+		</form>
+	</Dialogo>
+
+	<ScriptAdmin />
+</AdminLayout>

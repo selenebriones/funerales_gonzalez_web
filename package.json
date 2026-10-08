@@ -12,9 +12,12 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/node": "^11.1.7",
+    "@astrojs/vercel": "^11.0.13",
     "@fontsource-variable/lora": "^5.3.0",
     "@fontsource-variable/nunito-sans": "^5.3.0",
     "@tailwindcss/vite": "^4.3.3",
+    "@vercel/blob": "^2.8.1",
     "astro": "^7.3.6",
     "lucide-static": "^1.52.0",
     "sharp": "^0.35.5",

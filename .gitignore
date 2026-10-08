@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# contenido e imágenes del admin guardados en local (src/lib/almacen.ts)
+.almacen/

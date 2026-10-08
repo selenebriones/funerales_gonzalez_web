@@ -1,5 +1,4 @@
 ---
-import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Carrusel from '../components/Carrusel.astro';
 import HeroInterior from '../components/HeroInterior.astro';
@@ -7,12 +6,14 @@ import Icono from '../components/Icono.astro';
 import IconoWhatsApp from '../components/IconoWhatsApp.astro';
 import Separador from '../components/Separador.astro';
 import TituloSeccion from '../components/TituloSeccion.astro';
-import { categoriasDeFlores, type Arreglo } from '../data/flores';
+import type { Arreglo } from '../data/flores';
+import { leerFlores } from '../lib/almacen';
 import { pesos } from '../data/planes';
 import { sucursales, whatsappCon } from '../data/sitio';
 
-const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/flores/*.webp', { eager: true });
-const fotoDe = (a: Arreglo) => (a.foto ? fotos[`../assets/flores/${a.foto}.webp`]?.default : undefined);
+// Se arma en cada visita porque el contenido se edita desde el admin.
+export const prerender = false;
+const categoriasDeFlores = (await leerFlores()).filter((grupo) => grupo.arreglos.length);
 
 // Con foto primero; dentro de cada grupo se respeta el orden del documento.
 const conFotoPrimero = (arreglos: Arreglo[]) => [...arreglos].sort((a, b) => Number(!!b.foto) - Number(!!a.foto));
@@ -37,12 +38,11 @@ const campo = 'rounded-md border border-black/15 bg-white px-3 py-2.5 font-norma
 					<div class="mt-12">
 						{(() => {
 							const tarjetas = conFotoPrimero(grupo.arreglos).map((arreglo) => {
-								const foto = fotoDe(arreglo);
 								return (
 									<li>
 										<article class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:ring-oro-oscuro">
-											{foto ? (
-												<Image src={foto} alt={arreglo.nombre} widths={[400, 640]} sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 90vw" class="aspect-[5/4] w-full object-cover" />
+											{arreglo.foto ? (
+												<img src={arreglo.foto} alt={arreglo.nombre} loading="lazy" decoding="async" class="aspect-[5/4] w-full object-cover" />
 											) : (
 												<div class="grid aspect-[5/4] w-full place-items-center bg-lavanda">
 													<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />

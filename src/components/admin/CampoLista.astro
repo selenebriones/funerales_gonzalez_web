@@ -1,0 +1,30 @@
+---
+// Lista de puntos de información que puede crecer: "Agregar otro punto" suma un campo vacío.
+// Los campos se crean desde la plantilla al abrir el formulario (ver ScriptAdmin.astro).
+import Icono from '../Icono.astro';
+import { campo } from './estilos';
+
+interface Props {
+	nombre: string;
+	titulo: string;
+}
+
+const { nombre, titulo } = Astro.props;
+---
+
+<fieldset class="grid gap-2">
+	<legend class="mb-1.5 text-sm font-semibold text-ciruela">{titulo}</legend>
+	<ol class="grid gap-2" data-lista={nombre}></ol>
+	<template data-plantilla={nombre}>
+		<li class="flex items-center gap-2">
+			<Icono nombre="Check" class="size-4 shrink-0 text-oro-oscuro" />
+			<input name={nombre} maxlength="200" class={campo} aria-label="Punto de información" />
+			<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-oro-oscuro hover:bg-humo" aria-label="Quitar este punto" data-quitar>
+				<Icono nombre="Trash2" class="size-5" />
+			</button>
+		</li>
+	</template>
+	<button type="button" class="mt-1 flex items-center justify-center gap-2 rounded-md border border-dashed border-oro-oscuro/50 px-4 py-2.5 text-sm font-bold text-oro-oscuro transition hover:border-oro-oscuro hover:bg-humo" data-agregar-a={nombre}>
+		<Icono nombre="Plus" class="size-4" /> Agregar otro punto
+	</button>
+</fieldset>

@@ -1,0 +1,105 @@
+---
+// Layout del admin: misma identidad que el sitio (franja ciruela, logo, tipografías y tokens), con su propio menú.
+import '../styles/global.css';
+import { Image } from 'astro:assets';
+import logo from '../assets/brand/logo-color.webp';
+import Icono from '../components/Icono.astro';
+
+interface Props {
+	title: string;
+	/** Página pública que se edita, para el botón "Ver página". */
+	paginaPublica?: string;
+	/** Mensaje tras guardar ("Cambios guardados") o de error. */
+	aviso?: { tipo: 'ok' | 'error'; texto: string };
+}
+
+const { title, paginaPublica, aviso } = Astro.props;
+const ruta = Astro.url.pathname.replace(/\/$/, '');
+const menu = [
+	{ href: '/admin/catalogo', texto: 'Catálogo de ataúdes y urnas' },
+	{ href: '/admin/flores', texto: 'Flores' },
+	{ href: '/admin/obituarios', texto: 'Obituarios' },
+];
+---
+
+<!doctype html>
+<html lang="es-MX">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="robots" content="noindex, nofollow" />
+		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="theme-color" content="#281a39" />
+		<title>{title} · Admin Funerales González</title>
+	</head>
+	<body class="min-h-screen antialiased">
+		<header>
+			<div class="bg-ciruela text-sm text-white">
+				<div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
+					<p class="font-bold tracking-wide">Panel de administración</p>
+					{menu.some((m) => m.href === ruta) && (
+						<a href="/admin/salir" class="flex items-center gap-1.5 text-white/90 hover:text-white">
+							<Icono nombre="LogOut" class="size-4" /> Salir
+						</a>
+					)}
+				</div>
+			</div>
+			<div class="bg-white shadow-sm">
+				<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3">
+					<a href="/admin" aria-label="Ir al inicio del admin">
+						<Image src={logo} alt="Funerales González" class="h-14 w-auto" loading="eager" />
+					</a>
+					{menu.some((m) => m.href === ruta) && (
+						<nav class="flex flex-1 flex-wrap items-center gap-2" aria-label="Secciones del admin">
+							{menu.map((m) => (
+								<a
+									href={m.href}
+									aria-current={m.href === ruta ? 'page' : undefined}
+									class:list={[
+										'rounded-md px-4 py-2.5 font-bold transition',
+										m.href === ruta ? 'bg-marca text-white' : 'text-ciruela hover:bg-humo',
+									]}
+								>
+									{m.texto}
+								</a>
+							))}
+							{paginaPublica && (
+								<a href={paginaPublica} target="_blank" rel="noopener" class="ml-auto flex items-center gap-2 rounded-md px-4 py-2.5 font-bold text-oro-oscuro hover:bg-humo">
+									<Icono nombre="ExternalLink" class="size-5" /> Ver página
+								</a>
+							)}
+						</nav>
+					)}
+				</div>
+			</div>
+		</header>
+
+		{aviso && (
+			<div
+				role={aviso.tipo === 'error' ? 'alert' : 'status'}
+				class:list={[
+					'fixed inset-x-4 bottom-6 z-50 mx-auto flex max-w-md items-center gap-3 rounded-xl px-5 py-4 font-semibold text-white shadow-xl transition-opacity duration-500',
+					aviso.tipo === 'ok' ? 'bg-whatsapp' : 'bg-ciruela',
+				]}
+				data-aviso
+			>
+				<Icono nombre={aviso.tipo === 'ok' ? 'CircleCheck' : 'CircleAlert'} class="size-6 shrink-0" />
+				{aviso.texto}
+			</div>
+		)}
+
+		<slot />
+
+		<script>
+			// El aviso se oculta solo y se quita "?aviso=" de la URL para que no reaparezca al recargar.
+			const aviso = document.querySelector<HTMLElement>('[data-aviso]');
+			if (aviso) setTimeout(() => aviso.classList.add('opacity-0', 'pointer-events-none'), 4000);
+			const url = new URL(location.href);
+			if (url.searchParams.has('aviso')) {
+				url.searchParams.delete('aviso');
+				history.replaceState(null, '', url);
+			}
+		</script>
+	</body>
+</html>

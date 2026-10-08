@@ -1,0 +1,17 @@
+---
+// Confirmación antes de borrar un renglón.
+import Dialogo from './Dialogo.astro';
+---
+
+<Dialogo id="dialogo-borrar" antetitulo="Borrar">
+	<form method="post" class="mt-4">
+		<input type="hidden" name="accion" value="borrar" />
+		<input type="hidden" name="grupo" />
+		<input type="hidden" name="id" />
+		<p class="text-tinta/85">Dejará de aparecer en la página. Esta acción no se puede deshacer.</p>
+		<div class="mt-6 grid gap-3 sm:grid-cols-2">
+			<button type="button" class="rounded-md px-4 py-3 font-bold text-ciruela ring-1 ring-black/15 hover:bg-humo" data-dialogo-cerrar>Cancelar</button>
+			<button type="submit" class="rounded-md bg-ciruela px-4 py-3 font-bold text-white transition hover:bg-marca disabled:opacity-60">Sí, borrar</button>
+		</div>
+	</form>
+</Dialogo>

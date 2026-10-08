@@ -1,0 +1,68 @@
+---
+// Línea o categoría: cambiarle el nombre o crear una nueva. Al editar también ofrece "Agregar nueva" (la crea en la
+// misma sección: ataúdes, urnas o flores) y borrarla (pide confirmación y avisa que se borran sus tarjetas).
+// Valores que espera al abrirse: accion ("crear-grupo" o "renombrar"), grupo, seccion, nombre, tituloNueva,
+// tituloBorrar y avisoBorrar.
+import Icono from '../Icono.astro';
+import Dialogo from './Dialogo.astro';
+import Obligatorio from './Obligatorio.astro';
+import { botonGuardar, campo, etiqueta } from './estilos';
+
+interface Props {
+	antetitulo: string;
+	/** "la línea" o "la categoría", para el botón de borrar. */
+	queEs: string;
+	/** "nueva línea" o "nueva categoría", para el botón de agregar. */
+	nueva: string;
+}
+
+const { antetitulo, queEs, nueva } = Astro.props;
+---
+
+<Dialogo id="dialogo-grupo" antetitulo={antetitulo}>
+	<form method="post" class="mt-6">
+		<input type="hidden" name="accion" />
+		<input type="hidden" name="grupo" />
+		<input type="hidden" name="seccion" />
+		<!-- Solo al editar. Borrar va a la derecha y pequeño, lejos de "Guardar", para no borrar por error -->
+		<div class="mb-4 flex flex-wrap items-center justify-between gap-2" data-si="grupo">
+			<button
+				type="button"
+				class="flex items-center gap-1.5 rounded-md bg-ciruela px-3 py-1.5 text-sm font-bold text-white transition hover:bg-marca"
+				data-abrir="dialogo-grupo"
+				data-heredar
+				data-titulo-de="tituloNueva"
+				data-valores={JSON.stringify({ accion: 'crear-grupo', grupo: '', nombre: '' })}
+			>
+				<Icono nombre="ListPlus" class="size-4" /> Agregar {nueva}
+			</button>
+			<button
+				type="button"
+				class="flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-bold text-oro-oscuro ring-1 ring-oro-oscuro/40 transition hover:bg-oro-oscuro hover:text-white"
+				data-abrir="dialogo-borrar-grupo"
+				data-heredar
+				data-titulo-de="tituloBorrar"
+			>
+				<Icono nombre="Trash2" class="size-4" /> Borrar {queEs}
+			</button>
+		</div>
+		<label class={etiqueta}>
+			<span>Nombre <Obligatorio /></span>
+			<input name="nombre" required maxlength="80" class={campo} />
+		</label>
+		<button type="submit" class={botonGuardar}>Guardar</button>
+	</form>
+</Dialogo>
+
+<Dialogo id="dialogo-borrar-grupo" antetitulo="Borrar">
+	<form method="post" class="mt-4">
+		<input type="hidden" name="accion" value="borrar-grupo" />
+		<input type="hidden" name="grupo" />
+		<p class="text-tinta/85" data-texto="avisoBorrar"></p>
+		<p class="mt-2 font-semibold text-ciruela">Esta acción no se puede deshacer.</p>
+		<div class="mt-6 grid gap-3 sm:grid-cols-2">
+			<button type="button" class="rounded-md px-4 py-3 font-bold text-ciruela ring-1 ring-black/15 hover:bg-humo" data-dialogo-cerrar>Cancelar</button>
+			<button type="submit" class="rounded-md bg-ciruela px-4 py-3 font-bold text-white transition hover:bg-marca disabled:opacity-60">Sí, borrar</button>
+		</div>
+	</form>
+</Dialogo>

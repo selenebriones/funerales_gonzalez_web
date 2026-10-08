@@ -1,0 +1,64 @@
+---
+// Renglón de las listas del admin: imagen a la izquierda, nombre, y botones de editar y borrar.
+// Sin foto muestra la cruz del logo, igual que la página pública (en obituarios, la versión gris sobre fondo oscuro).
+// `data-fila`, `data-id` y `data-nombre` los usa el paginador y el buscador (ScriptAdmin.astro).
+import Icono from '../Icono.astro';
+
+interface Props {
+	nombre: string;
+	foto?: string;
+	/** Texto bajo el nombre (precio, fechas...). */
+	nota?: string;
+	/** Ventana que abre "Editar" y valores con los que se llena su formulario. */
+	editar: { dialogo: string; titulo: string; valores: Record<string, unknown> };
+	/** Valores ocultos que identifican el renglón para borrarlo. */
+	borrar: Record<string, string>;
+	/** Respaldo sin foto como en la página de obituarios. */
+	obituario?: boolean;
+}
+
+const { nombre, foto, nota, editar, borrar, obituario = false } = Astro.props;
+---
+
+<li
+	class="flex scroll-mt-24 flex-wrap items-center gap-x-4 gap-y-3 rounded-xl bg-white p-3 shadow-sm ring-1 ring-black/5 transition sm:flex-nowrap"
+	data-fila
+	data-id={borrar.id}
+	data-nombre={nombre}
+>
+	{foto ? (
+		<img src={foto} alt="" loading="lazy" decoding="async" class="h-16 w-20 shrink-0 rounded-lg object-cover" />
+	) : obituario ? (
+		<div class="flex h-16 w-20 shrink-0 justify-center rounded-lg bg-linear-to-b from-tinta to-black pt-1.5">
+			<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-30 grayscale" />
+		</div>
+	) : (
+		<div class="grid h-16 w-20 shrink-0 place-items-center rounded-lg bg-lavanda">
+			<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />
+		</div>
+	)}
+	<div class="min-w-0 flex-1">
+		<p class="font-serif text-lg font-semibold text-balance text-ciruela">{nombre}</p>
+		{nota && <p class="text-sm text-tinta/75">{nota}</p>}
+	</div>
+	<div class="flex w-full shrink-0 gap-2 sm:w-auto">
+		<button
+			type="button"
+			class="flex flex-1 items-center justify-center gap-1.5 rounded-md bg-marca px-4 py-2.5 text-sm font-bold text-white transition hover:bg-oro-oscuro sm:flex-none"
+			data-abrir={editar.dialogo}
+			data-titulo={editar.titulo}
+			data-valores={JSON.stringify(editar.valores)}
+		>
+			<Icono nombre="Pencil" class="size-4" /> Editar
+		</button>
+		<button
+			type="button"
+			class="flex flex-1 items-center justify-center gap-1.5 rounded-md px-4 py-2.5 text-sm font-bold text-oro-oscuro ring-1 ring-oro-oscuro/40 transition hover:bg-oro-oscuro hover:text-white sm:flex-none"
+			data-abrir="dialogo-borrar"
+			data-titulo={`¿Seguro que deseas borrar «${nombre}»?`}
+			data-valores={JSON.stringify(borrar)}
+		>
+			<Icono nombre="Trash2" class="size-4" /> Borrar
+		</button>
+	</div>
+</li>

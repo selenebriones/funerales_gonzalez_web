@@ -1,44 +1,76 @@
-// Obituarios publicados. `foto` es el nombre del archivo en src/assets/obituarios/ (sin extensión);
-// sin foto, la tarjeta muestra la cruz del logo.
-// Para agregar uno: subir la foto a esa carpeta y añadir una entrada al inicio de la lista (los más recientes primero).
+// Obituarios: contenido inicial y formato. Desde el admin (/admin/obituarios) el cliente los publica y se guardan en
+// el almacén (src/lib/almacen.ts); esta lista solo se usa mientras no haya nada guardado. Los más recientes van primero.
+// `foto` es la URL de la imagen (public/obituarios/ o /imagenes/ si se subió desde el admin); sin foto, la tarjeta
+// muestra la cruz del logo. Sin `ubicacion` no aparece el botón "Ver ubicación".
 // TODO (cliente): definir si los obituarios se capturan aquí, desde un módulo propio o desde Facebook
 // (notas del documento de contenido). Por ahora solo hay un registro de prueba.
+import { sucursales } from './sitio';
 
-export interface Obituario {
-	nombre: string;
-	nacimiento: number;
-	fallecimiento: number;
-	sucursal: string;
-	sala: string;
-	foto?: string;
-	servicio: {
-		inicia: string;
-		partira: string;
-		misa?: string;
-		despide: string;
-	};
+/** Día y hora (24 h, "HH:MM") de un momento del servicio; el año no se pide. */
+export interface Momento {
+	dia: number;
+	mes: number; // 1 a 12
+	hora: string;
 }
 
-const publicados: Obituario[] = [
-	{
-		nombre: 'Patricia Reyes Acosta',
-		nacimiento: 1963,
-		fallecimiento: 2026,
-		sucursal: 'Capillas Montemorelos',
-		sala: 'Sala 1',
-		foto: 'foto_esquela_test',
-		servicio: {
-			inicia: '6 de octubre a las 9:30 hrs',
-			partira: '7 de octubre a las 9:40 hrs',
-			misa: 'Iglesia Resurrección a las 10:00 hrs',
-			despide: 'Panteón Municipal',
-		},
-	},
+export interface Obituario {
+	id: string;
+	nombre: string;
+	/** "AAAA-MM-DD". El contenido inicial solo trae el año ("AAAA"). */
+	nacimiento: string;
+	fallecimiento: string;
+	capilla: string;
+	sala: string;
+	/** Enlace de Google Maps. */
+	ubicacion?: string;
+	foto?: string;
+	inicio: Momento;
+	partida: Momento;
+	misa?: { iglesia: string; hora: string };
+	despide?: string;
+}
+
+export const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+/** "6 de octubre a las 09:30" */
+export const textoMomento = (m: Momento) => `${m.dia} de ${meses[m.mes - 1]} a las ${m.hora}`;
+
+/** "Iglesia Resurrección a las 10:00" */
+export const textoMisa = (m: NonNullable<Obituario['misa']>) => `${m.iglesia} a las ${m.hora}`;
+
+export const anio = (fecha: string) => fecha.slice(0, 4);
+
+/** "15 de marzo de 1941", o solo el año si no hay fecha completa. */
+export const fechaLarga = (fecha: string) => {
+	const [a, m, d] = fecha.split('-').map(Number);
+	return m && d ? `${d} de ${meses[m - 1]} de ${a}` : String(a);
+};
+
+// --- Contenido inicial ---
+
+const mapaDe = (capilla: string) => sucursales.find((s) => s.nombre === capilla)?.mapa;
+
+// "8 de octubre a las 10:00 hrs" → Momento
+const momento = (texto: string): Momento => {
+	const [, dia, mes, h, min] = texto.match(/^(\d+) de (\w+) a las (\d+):(\d+)/)!;
+	return { dia: Number(dia), mes: meses.indexOf(mes) + 1, hora: `${h.padStart(2, '0')}:${min}` };
+};
+
+// "Iglesia Resurrección a las 10:00 hrs" → misa
+const misa = (texto: string) => {
+	const [, iglesia, h, min] = texto.match(/^(.*) a las (\d+):(\d+)/)!;
+	return { iglesia, hora: `${h.padStart(2, '0')}:${min}` };
+};
+
+type Fila = [nombre: string, nacimiento: number, capilla: string, sala: string, inicia: string, partira: string, misa: string, despide: string, foto?: string];
+
+const publicados: Fila[] = [
+	['Patricia Reyes Acosta', 1963, 'Capillas Montemorelos', 'Sala 1', '6 de octubre a las 9:30 hrs', '7 de octubre a las 9:40 hrs', 'Iglesia Resurrección a las 10:00 hrs', 'Panteón Municipal', '/obituarios/foto_esquela_test.webp'],
 ];
 
 // EJEMPLO PARA REVISIÓN DEL CLIENTE: personas ficticias, sin foto, para mostrar cómo se ve la página llena
-// y el paginador. Antes de publicar, borrar esta lista y dejar `export const obituarios = publicados;`.
-const deEjemplo: Obituario[] = [
+// y el paginador. Se pueden borrar desde el admin.
+const deEjemplo: Fila[] = [
 	['María Guadalupe Treviño Garza', 1941, 'Capillas Matriz', 'Sala 3', '8 de octubre a las 10:00 hrs', '9 de octubre a las 11:00 hrs', 'Parroquia del Sagrado Corazón a las 12:00 hrs', 'Panteón del Carmen'],
 	['José Luis Martínez Cantú', 1955, 'Crematorio y Capillas Oriente', 'Sala 2', '8 de octubre a las 12:00 hrs', '9 de octubre a las 10:00 hrs', '', 'Crematorio Oriente'],
 	['Ana Laura Villarreal Salinas', 1978, 'Capillas Hidalgo', 'Sala 1', '8 de octubre a las 16:00 hrs', '9 de octubre a las 9:00 hrs', 'Templo de San Martín a las 9:30 hrs', 'Panteón Municipal de Hidalgo'],
@@ -54,13 +86,21 @@ const deEjemplo: Obituario[] = [
 	['Graciela Tamez Rodríguez', 1952, 'Capillas Hidalgo', 'Sala 1', '4 de octubre a las 18:00 hrs', '5 de octubre a las 10:00 hrs', 'Templo de San Martín a las 10:30 hrs', 'Panteón Municipal de Hidalgo'],
 	['Fernando Cárdenas Villanueva', 1960, 'Capillas Matriz', 'Sala 3', '4 de octubre a las 12:00 hrs', '5 de octubre a las 11:00 hrs', 'Basílica del Roble a las 11:30 hrs', 'Panteón del Carmen'],
 	['Irma Delia Garza Quintanilla', 1944, 'Crematorio y Capillas Oriente', 'Sala 2', '4 de octubre a las 9:00 hrs', '5 de octubre a las 9:00 hrs', '', 'Crematorio Oriente'],
-].map(([nombre, nacimiento, sucursal, sala, inicia, partira, misa, despide]) => ({
-	nombre: nombre as string,
-	nacimiento: nacimiento as number,
-	fallecimiento: 2026,
-	sucursal: sucursal as string,
-	sala: sala as string,
-	servicio: { inicia: inicia as string, partira: partira as string, misa: (misa as string) || undefined, despide: despide as string },
-}));
+];
 
-export const obituarios = [...publicados, ...deEjemplo];
+// Los ids del contenido inicial dependen solo del orden, así son estables hasta el primer guardado.
+export const obituariosIniciales = (): Obituario[] =>
+	[...publicados, ...deEjemplo].map(([nombre, nacimiento, capilla, sala, inicia, partira, laMisa, despide, foto], i) => ({
+		id: `obituario-${i}`,
+		nombre,
+		nacimiento: String(nacimiento),
+		fallecimiento: '2026',
+		capilla,
+		sala,
+		ubicacion: mapaDe(capilla),
+		foto,
+		inicio: momento(inicia),
+		partida: momento(partira),
+		misa: laMisa ? misa(laMisa) : undefined,
+		despide,
+	}));

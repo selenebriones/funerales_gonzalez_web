@@ -12,7 +12,7 @@ Rediseño de funeralesgonzalez.com (hoy en Wix) para una funeraria familiar de M
 ## Convenciones
 
 - Textos en español de México (`lang="es-MX"`), tuteando ("Estamos contigo", "Llámanos"). Solo el lema del logo va en usted.
-- Colores y fuentes solo con los tokens de `src/styles/global.css` (`marca`, `oro`, `oro-oscuro`, `oro-claro`, `ciruela`, `lavanda`, `humo`, `marfil`, `tinta`, `whatsapp`; `font-serif` = Lora para titulares, `font-sans` = Nunito Sans). Nada de colores sueltos de Tailwind. Texto blanco pequeño nunca sobre `oro` (contraste insuficiente): usar `oro-oscuro`.
+- Colores y fuentes solo con los tokens de `src/styles/global.css` (`marca`, `oro`, `oro-oscuro`, `oro-claro`, `ciruela`, `lavanda`, `humo`, `marfil`, `tinta`, `whatsapp`, `rojo` (solo para el asterisco de campo obligatorio del admin); `font-serif` = Lora para titulares, `font-sans` = Nunito Sans). Nada de colores sueltos de Tailwind. Texto blanco pequeño nunca sobre `oro` (contraste insuficiente): usar `oro-oscuro`.
 - Teléfonos, WhatsApp, sucursales y menú viven solo en `src/data/sitio.ts`; no escribirlos a mano en los componentes.
 - Iconos con `<Icono nombre="..." />` (Lucide vía `lucide-static`).
 - Encabezados de sección con `<TituloSeccion antetitulo titulo />`.
@@ -20,6 +20,16 @@ Rediseño de funeralesgonzalez.com (hoy en Wix) para una funeraria familiar de M
 - La portada enlaza a `/servicios#inhumacion`, `#cremacion-con-velacion`, `#cremacion-directa`, `#traslados`, `#recepcion-de-restos` y `#crematorio-propio`: la página de servicios debe tener esos `id`.
 - Comprobar con `npm run build` y revisar a 1440, 1280, 1024 y 390 px (el menú de escritorio aparece desde `xl`, 1280 px).
 - Las plantillas de referencia (Farewell, Beacon/Anubis) son inspiración: no copiar su código ni sus imágenes.
+
+## Admin (/admin)
+
+- Solo edita el catálogo de ataúdes y urnas, las flores y los obituarios. Contraseña única en la variable `ADMIN_PASSWORD` (`.env` en local, Environment Variables en Vercel); ver `.env.example`.
+- `/catalogo`, `/flores`, `/obituarios`, `/admin/*` e `/imagenes/*` se generan en cada visita (`prerender = false`); el resto del sitio sigue estático. Adaptador: Vercel si existe `VERCEL`, si no Node.
+- El contenido vive en el almacén (`src/lib/almacen.ts`): Vercel Blob **privado** si el proyecto tiene un Blob store conectado, si no la carpeta `.almacen/` (ignorada por git). `src/data/catalogo.ts`, `flores.ts` y `obituarios.ts` son solo el contenido inicial mientras no se haya guardado nada; cambiar textos ahí ya no afecta un sitio donde el cliente guardó cambios.
+- Las imágenes subidas pesan 1 MB como máximo (se revisa en el navegador y en el servidor), se convierten a WebP (máx. 1200 px) y se sirven en `/imagenes/...`; las fotos originales están en `public/catalogo/`, `public/flores/` y `public/obituarios/`. Sin foto se muestra la cruz del logo.
+- El admin usa el mismo diseño del sitio (`AdminLayout`, componentes en `src/components/admin/`), con listas de renglones (foto, nombre, editar, borrar) de 10 en 10 con paginador. Catálogo y flores muestran una sección y una línea o categoría a la vez; la flecha junto al título abre el menú para cambiar (Ataúdes ↔ Urnas, y entre líneas o categorías); obituarios tiene buscador por nombre (sin distinguir acentos).
+- Ataúdes y urnas se agrupan en líneas (`Linea`); las líneas y las categorías de flores se renombran, borran (con sus tarjetas) y se crean desde "Editar" de cualquier línea o categoría; la nueva queda en la misma sección (ataúdes, urnas o flores). El botón grande "Agregar línea/categoría" solo aparece si la sección se queda sin ninguna. La primera línea de urnas no tiene nombre y no muestra subtítulo.
+- Obituarios: fechas completas de nacimiento y fallecimiento (la tarjeta muestra los años), inicio y partida con día, mes y hora de 24 h, misa opcional ("Iglesia a las HH:MM"); sin `ubicacion` no sale "Ver ubicación". Los obituarios de ejemplo son ficticios y el cliente los borra desde el admin.
 
 ## Pendiente del cliente
 

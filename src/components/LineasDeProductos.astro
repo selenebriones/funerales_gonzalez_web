@@ -1,0 +1,39 @@
+---
+// Líneas del catálogo (ataúdes o urnas): subtítulo y sus tarjetas, en carrusel si son más de 3.
+// Las líneas sin tarjetas no se muestran; una línea sin nombre no lleva subtítulo.
+import Carrusel from './Carrusel.astro';
+import TarjetaProducto from './TarjetaProducto.astro';
+import type { Linea, Producto } from '../data/catalogo';
+
+interface Props {
+	lineas: Linea[];
+	tipo: 'ataúd' | 'urna';
+}
+
+const { lineas, tipo } = Astro.props;
+
+// Los modelos con foto van primero para que ningún carrusel abra con la cruz de respaldo;
+// dentro de cada grupo se respeta el orden del admin.
+const conFotoPrimero = (productos: Producto[]) => [...productos].sort((a, b) => Number(!!b.foto) - Number(!!a.foto));
+---
+
+<div class="mt-14 space-y-16">
+	{lineas.filter((l) => l.productos.length).map((l) => (
+		<div>
+			{l.linea && <h3 class="mb-6 text-2xl sm:text-3xl">{l.linea}</h3>}
+			{l.productos.length > 3 ? (
+				<Carrusel etiqueta={l.linea || (tipo === 'ataúd' ? 'Ataúdes' : 'Urnas')}>
+					{conFotoPrimero(l.productos).map((producto) => (
+						<li><TarjetaProducto producto={producto} tipo={tipo} /></li>
+					))}
+				</Carrusel>
+			) : (
+				<ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+					{conFotoPrimero(l.productos).map((producto) => (
+						<li><TarjetaProducto producto={producto} tipo={tipo} /></li>
+					))}
+				</ul>
+			)}
+		</div>
+	))}
+</div>

@@ -1,0 +1,20 @@
+---
+// Selector de imagen opcional con vista previa. Al editar muestra la foto actual; si no se elige otra, se conserva.
+// Sin imagen, la página muestra la cruz del logo.
+import Icono from '../Icono.astro';
+import { PESO_MAXIMO_IMAGEN } from '../../lib/almacen';
+---
+
+<div class="grid gap-1.5 text-sm font-semibold text-ciruela">
+	<span>Imagen</span>
+	<label class="relative grid h-44 cursor-pointer place-items-center overflow-hidden rounded-xl border-2 border-dashed border-black/15 bg-humo transition focus-within:border-oro-oscuro hover:border-oro-oscuro">
+		<img alt="" class="absolute inset-0 hidden size-full object-cover" data-vista-previa />
+		<span class="relative flex flex-col items-center gap-2 rounded-lg bg-white/90 px-4 py-3 text-center text-oro-oscuro shadow-sm">
+			<Icono nombre="ImagePlus" class="size-7" />
+			<span data-vista-previa-accion>Elegir imagen</span>
+		</span>
+		<input name="imagen" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" data-campo-imagen data-peso-maximo={PESO_MAXIMO_IMAGEN} />
+	</label>
+	<span class="text-xs font-normal text-tinta/70">Opcional. JPG, PNG o WEBP de hasta 1 MB; sin imagen se muestra la cruz del logo.</span>
+	<span class="text-sm font-bold text-rojo" role="alert" hidden data-error-imagen></span>
+</div>

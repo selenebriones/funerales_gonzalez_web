@@ -1,0 +1,46 @@
+---
+// Día, mes y hora (24 h) de un momento del servicio. Campos: <prefijo>Dia, <prefijo>Mes, <prefijo>Hora, <prefijo>Minuto.
+// Con `soloHora` pide únicamente la hora (para la misa).
+import { meses } from '../../data/obituarios';
+import Obligatorio from './Obligatorio.astro';
+import { campo } from './estilos';
+
+interface Props {
+	prefijo: string;
+	titulo: string;
+	obligatorio?: boolean;
+	soloHora?: boolean;
+}
+
+const { prefijo, titulo, obligatorio = false, soloHora = false } = Astro.props;
+const dos = (n: number) => String(n).padStart(2, '0');
+const horas = Array.from({ length: 24 }, (_, i) => dos(i));
+const minutos = Array.from({ length: 12 }, (_, i) => dos(i * 5));
+const caja = [campo, 'min-w-0'];
+---
+
+<fieldset class="grid gap-1.5">
+	<legend class="mb-1.5 text-sm font-semibold text-ciruela">{titulo} {obligatorio && <Obligatorio />}</legend>
+	<div class:list={['grid gap-2', soloHora ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-4']}>
+		{!soloHora && (
+			<>
+				<select name={`${prefijo}Dia`} required={obligatorio} aria-label={`${titulo}: día`} class:list={caja}>
+					<option value="">Día</option>
+					{Array.from({ length: 31 }, (_, i) => <option value={i + 1}>{i + 1}</option>)}
+				</select>
+				<select name={`${prefijo}Mes`} required={obligatorio} aria-label={`${titulo}: mes`} class:list={caja}>
+					<option value="">Mes</option>
+					{meses.map((m, i) => <option value={i + 1}>{m}</option>)}
+				</select>
+			</>
+		)}
+		<select name={`${prefijo}Hora`} required={obligatorio} aria-label={`${titulo}: hora`} class:list={caja}>
+			<option value="">Hora</option>
+			{horas.map((h) => <option value={h}>{h}</option>)}
+		</select>
+		<select name={`${prefijo}Minuto`} required={obligatorio} aria-label={`${titulo}: minutos`} class:list={caja}>
+			<option value="">Min</option>
+			{minutos.map((m) => <option value={m}>{m}</option>)}
+		</select>
+	</div>
+</fieldset>

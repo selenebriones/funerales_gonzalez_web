@@ -1,0 +1,279 @@
+---
+// Comportamiento de las ventanas del admin. Un botón con `data-abrir="<id>"` abre la ventana, pone `data-titulo`
+// como título y llena el formulario con `data-valores` (JSON):
+// - cada valor va al campo con su nombre (texto, oculto o select); las listas, en `data-lista`;
+// - `foto` se muestra como vista previa de la imagen;
+// - `data-texto="<valor>"` muestra ese valor como texto y `data-si="<valor>"` se oculta si el valor está vacío.
+// Un botón dentro de una ventana con `data-heredar` abre otra (o la misma) con los mismos valores, cambiando los que
+// traiga en `data-valores`, y con el título de `data-titulo-de`.
+//
+// Grupos: de cada `data-seccion` se ve solo una, y dentro solo un `data-grupo` (línea o categoría). Cuál, lo dice el
+// "#id" de la URL (un grupo o una sección); sin él, la primera. Los menús `data-menu` cambian de grupo o sección.
+//
+// Paginador: cada lista `data-paginar` muestra sus renglones (`data-fila`) de 10 en 10. Un campo `data-buscar="x"`
+// filtra por nombre la lista `data-paginar="x"`. Con "?ver=<id>" en la URL abre la página de ese renglón y lo resalta.
+---
+
+<script>
+	type Valores = Record<string, unknown>;
+	const PUNTOS_INICIALES = 2;
+	const valoresAbiertos = new WeakMap<HTMLDialogElement, Valores>();
+
+	function agregarPunto(form: HTMLFormElement, nombre: string, valor = '') {
+		const lista = form.querySelector<HTMLElement>(`[data-lista="${nombre}"]`)!;
+		const plantilla = form.querySelector<HTMLTemplateElement>(`[data-plantilla="${nombre}"]`)!;
+		const fila = plantilla.content.firstElementChild!.cloneNode(true) as HTMLElement;
+		fila.querySelector('input')!.value = valor;
+		lista.append(fila);
+		return fila;
+	}
+
+	function mostrarImagen(form: HTMLFormElement, src?: string) {
+		const vista = form.querySelector<HTMLImageElement>('[data-vista-previa]');
+		if (!vista) return;
+		vista.classList.toggle('hidden', !src);
+		if (src) vista.src = src;
+		else vista.removeAttribute('src');
+		form.querySelector('[data-vista-previa-accion]')!.textContent = src ? 'Cambiar imagen' : 'Elegir imagen';
+	}
+
+	function llenar(dialogo: HTMLDialogElement, valores: Valores) {
+		const form = dialogo.querySelector('form')!;
+		form.reset();
+		form.querySelectorAll('[data-lista]').forEach((lista) => lista.replaceChildren());
+		form.querySelectorAll<HTMLElement>('[data-error-imagen]').forEach((el) => (el.hidden = true));
+		for (const [nombre, valor] of Object.entries(valores)) {
+			if (Array.isArray(valor)) {
+				const puntos = valor.length ? valor : Array(PUNTOS_INICIALES).fill('');
+				puntos.forEach((v) => agregarPunto(form, nombre, String(v)));
+				continue;
+			}
+			const campo = form.elements.namedItem(nombre);
+			const texto = valor == null ? '' : String(valor);
+			if (campo instanceof HTMLSelectElement || (campo instanceof HTMLInputElement && campo.type !== 'file')) campo.value = texto;
+		}
+		dialogo.querySelectorAll<HTMLElement>('[data-texto]').forEach((el) => (el.textContent = String(valores[el.dataset.texto!] ?? '')));
+		dialogo.querySelectorAll<HTMLElement>('[data-si]').forEach((el) => (el.hidden = !valores[el.dataset.si!]));
+		mostrarImagen(form, typeof valores.foto === 'string' ? valores.foto : undefined);
+	}
+
+	document.querySelectorAll<HTMLElement>('[data-abrir]').forEach((boton) =>
+		boton.addEventListener('click', () => {
+			const padre = boton.closest('dialog');
+			const propios: Valores = JSON.parse(boton.dataset.valores ?? '{}');
+			const valores: Valores = boton.hasAttribute('data-heredar') && padre ? { ...valoresAbiertos.get(padre), ...propios } : propios;
+			const titulo = boton.dataset.tituloDe ? String(valores[boton.dataset.tituloDe] ?? '') : (boton.dataset.titulo ?? '');
+			if (padre) padre.close();
+
+			const dialogo = document.getElementById(boton.dataset.abrir!) as HTMLDialogElement;
+			dialogo.querySelector('[data-dialogo-titulo]')!.textContent = titulo;
+			llenar(dialogo, valores);
+			valoresAbiertos.set(dialogo, valores);
+			dialogo.showModal();
+		}),
+	);
+
+	document.querySelectorAll<HTMLDialogElement>('[data-dialogo]').forEach((dialogo) => {
+		const form = dialogo.querySelector('form')!;
+		dialogo.querySelectorAll('[data-dialogo-cerrar]').forEach((b) => b.addEventListener('click', () => dialogo.close()));
+		// Cerrar al tocar fuera de la ventana
+		dialogo.addEventListener('click', (e) => {
+			if (e.target === dialogo) dialogo.close();
+		});
+
+		form.addEventListener('click', (e) => {
+			const objetivo = e.target as HTMLElement;
+			const agregar = objetivo.closest<HTMLElement>('[data-agregar-a]');
+			if (agregar) agregarPunto(form, agregar.dataset.agregarA!).querySelector('input')!.focus();
+			objetivo.closest('[data-quitar]')?.closest('li')?.remove();
+		});
+
+		// Rechaza en el momento las imágenes de más de 1 MB (el servidor también lo revisa).
+		const campoImagen = form.querySelector<HTMLInputElement>('[data-campo-imagen]');
+		const errorImagen = form.querySelector<HTMLElement>('[data-error-imagen]');
+		campoImagen?.addEventListener('change', () => {
+			const archivo = campoImagen.files?.[0];
+			const pesada = archivo && archivo.size > Number(campoImagen.dataset.pesoMaximo);
+			errorImagen!.hidden = !pesada;
+			if (pesada) {
+				errorImagen!.textContent = `La imagen pesa ${(archivo.size / 1024 / 1024).toFixed(1)} MB; el máximo es 1 MB. Elige una más ligera.`;
+				campoImagen.value = '';
+				return;
+			}
+			if (archivo) mostrarImagen(form, URL.createObjectURL(archivo));
+		});
+
+		// Evita guardar dos veces mientras se sube la imagen.
+		form.addEventListener('submit', () => {
+			const enviar = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+			enviar.disabled = true;
+			enviar.textContent = 'Guardando…';
+		});
+	});
+</script>
+
+<script>
+	const secciones = [...document.querySelectorAll<HTMLElement>('[data-seccion]')];
+
+	function mostrarGrupo(id: string) {
+		if (!secciones.length) return;
+		const objetivo = id ? document.getElementById(id) : null;
+		const seccion = objetivo?.closest<HTMLElement>('[data-seccion]') ?? secciones[0];
+		secciones.forEach((s) => (s.hidden = s !== seccion));
+		const grupos = [...seccion.querySelectorAll<HTMLElement>('[data-grupo]')];
+		const grupo = objetivo?.closest<HTMLElement>('[data-grupo]') ?? grupos[0];
+		grupos.forEach((g) => (g.hidden = g !== grupo));
+	}
+
+	const menus = [...document.querySelectorAll<HTMLElement>('[data-menu]')];
+	const cerrarMenus = (excepto?: HTMLElement) =>
+		menus.forEach((m) => {
+			if (m === excepto) return;
+			m.querySelector('[data-menu-lista]')!.toggleAttribute('hidden', true);
+			m.querySelector('[data-menu-boton]')!.setAttribute('aria-expanded', 'false');
+		});
+	menus.forEach((menu) => {
+		const boton = menu.querySelector<HTMLButtonElement>('[data-menu-boton]')!;
+		const lista = menu.querySelector<HTMLElement>('[data-menu-lista]')!;
+		boton.addEventListener('click', () => {
+			cerrarMenus(menu);
+			const abrir = lista.hidden;
+			lista.hidden = !abrir;
+			boton.setAttribute('aria-expanded', String(abrir));
+		});
+		lista.addEventListener('click', (e) => {
+			const enlace = (e.target as HTMLElement).closest<HTMLAnchorElement>('[data-ir-grupo]');
+			if (!enlace) return;
+			e.preventDefault();
+			history.replaceState(null, '', `#${enlace.dataset.irGrupo}`);
+			mostrarGrupo(enlace.dataset.irGrupo!);
+			cerrarMenus();
+			const seccion = secciones.find((s) => !s.hidden);
+			if (seccion && seccion.getBoundingClientRect().top < 0) seccion.scrollIntoView({ block: 'start' });
+		});
+	});
+	// Cerrar al tocar fuera o con Escape
+	document.addEventListener('click', (e) => {
+		if (!(e.target as HTMLElement).closest('[data-menu]')) cerrarMenus();
+	});
+	document.addEventListener('keydown', (e) => {
+		if (e.key === 'Escape') cerrarMenus();
+	});
+	addEventListener('hashchange', () => mostrarGrupo(location.hash.slice(1)));
+	mostrarGrupo(location.hash.slice(1));
+
+	const POR_PAGINA = 10;
+	// Sin acentos ni mayúsculas, para que "trevino" encuentre "Treviño".
+	const normalizar = (t: string) => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+	const claseBoton = 'grid h-10 min-w-10 place-items-center rounded-md px-3 text-sm font-bold transition';
+	const flecha = (d: string) =>
+		`<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="${d}" /></svg>`;
+
+	// Números a mostrar: primera, última y vecinas de la actual, con "…" en los huecos.
+	function numeros(actual: number, total: number) {
+		const lista: (number | '…')[] = [];
+		for (let n = 1; n <= total; n++) {
+			if (n === 1 || n === total || Math.abs(n - actual) <= 1) lista.push(n);
+			else if (lista.at(-1) !== '…') lista.push('…');
+		}
+		return lista;
+	}
+
+	interface Paginador {
+		mostrar(): void;
+		filtrar(texto: string): void;
+		irA(fila: HTMLElement): void;
+	}
+	const paginadores = new Map<HTMLElement, Paginador>();
+
+	document.querySelectorAll<HTMLElement>('[data-paginar]').forEach((lista) => {
+		const filas = [...lista.querySelectorAll<HTMLElement>(':scope > [data-fila]')];
+		let pagina = 1;
+		let filtro = '';
+
+		const nav = document.createElement('li');
+		nav.className = 'flex flex-wrap items-center justify-between gap-3 pt-2';
+		const vacio = document.createElement('li');
+		vacio.className = 'rounded-xl bg-humo px-4 py-6 text-center text-tinta/70';
+		vacio.textContent = 'No se encontró ningún nombre con esa búsqueda.';
+		lista.append(vacio, nav);
+
+		const visibles = () => filas.filter((f) => normalizar(f.dataset.nombre ?? '').includes(filtro));
+
+		function mostrar() {
+			const lasQueSi = visibles();
+			const total = Math.max(1, Math.ceil(lasQueSi.length / POR_PAGINA));
+			pagina = Math.min(pagina, total);
+			const desde = (pagina - 1) * POR_PAGINA;
+			filas.forEach((f) => (f.hidden = true));
+			lasQueSi.slice(desde, desde + POR_PAGINA).forEach((f) => (f.hidden = false));
+			vacio.hidden = !(filtro && lasQueSi.length === 0);
+
+			nav.hidden = total <= 1;
+			if (total <= 1) return;
+			const botones = numeros(pagina, total)
+				.map((n) =>
+					n === '…'
+						? `<span class="px-1 text-tinta/50">…</span>`
+						: n === pagina
+							? `<span class="${claseBoton} bg-oro-oscuro text-white" aria-current="page">${n}</span>`
+							: `<button type="button" class="${claseBoton} bg-white text-ciruela ring-1 ring-black/10 hover:bg-marfil" data-ir="${n}" aria-label="Página ${n}">${n}</button>`,
+				)
+				.join('');
+			const paso = (n: number, d: string, etiqueta: string, activo: boolean) =>
+				`<button type="button" class="${claseBoton} bg-white text-oro-oscuro ring-1 ring-black/10 hover:bg-marfil disabled:opacity-40 disabled:hover:bg-white" data-ir="${n}" aria-label="${etiqueta}" ${activo ? '' : 'disabled'}>${flecha(d)}</button>`;
+			nav.innerHTML = `
+				<p class="text-sm text-tinta/70">Mostrando ${desde + 1}–${Math.min(desde + POR_PAGINA, lasQueSi.length)} de ${lasQueSi.length}</p>
+				<nav class="flex flex-wrap items-center gap-1.5" aria-label="Páginas">
+					${paso(pagina - 1, 'm15 18-6-6 6-6', 'Página anterior', pagina > 1)}${botones}${paso(pagina + 1, 'm9 18 6-6-6-6', 'Página siguiente', pagina < total)}
+				</nav>`;
+		}
+
+		nav.addEventListener('click', (e) => {
+			const boton = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-ir]');
+			if (!boton) return;
+			pagina = Number(boton.dataset.ir);
+			mostrar();
+			// Que el inicio de la lista quede a la vista al cambiar de página.
+			if (lista.getBoundingClientRect().top < 0) lista.scrollIntoView({ block: 'start' });
+		});
+
+		const paginador: Paginador = {
+			mostrar,
+			filtrar(texto) {
+				filtro = normalizar(texto);
+				pagina = 1;
+				mostrar();
+			},
+			irA(fila) {
+				pagina = Math.floor(visibles().indexOf(fila) / POR_PAGINA) + 1;
+				mostrar();
+			},
+		};
+		paginadores.set(lista, paginador);
+		mostrar();
+	});
+
+	document.querySelectorAll<HTMLInputElement>('[data-buscar]').forEach((campo) => {
+		const lista = document.querySelector<HTMLElement>(`[data-paginar="${campo.dataset.buscar}"]`);
+		const paginador = lista && paginadores.get(lista);
+		campo.addEventListener('input', () => paginador?.filtrar(campo.value));
+	});
+
+	// Tras guardar: abre la página donde quedó el renglón y lo resalta un momento.
+	const url = new URL(location.href);
+	const ver = url.searchParams.get('ver');
+	if (ver) {
+		url.searchParams.delete('ver');
+		history.replaceState(null, '', url);
+		const fila = [...document.querySelectorAll<HTMLElement>('[data-fila]')].find((f) => f.dataset.id === ver);
+		const lista = fila?.closest<HTMLElement>('[data-paginar]');
+		if (fila && lista) {
+			mostrarGrupo(fila.closest<HTMLElement>('[data-grupo]')?.id ?? '');
+			paginadores.get(lista)?.irA(fila);
+			fila.scrollIntoView({ block: 'center' });
+			fila.classList.add('ring-2', 'ring-oro-oscuro');
+			setTimeout(() => fila.classList.remove('ring-2', 'ring-oro-oscuro'), 2500);
+		}
+	}
+</script>

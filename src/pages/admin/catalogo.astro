@@ -1,0 +1,142 @@
+---
+// Admin del catálogo: líneas de ataúdes y de urnas (crear, renombrar, borrar) y sus tarjetas (agregar, editar, borrar).
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import HeroInterior from '../../components/HeroInterior.astro';
+import CampoImagen from '../../components/admin/CampoImagen.astro';
+import CampoLista from '../../components/admin/CampoLista.astro';
+import Dialogo from '../../components/admin/Dialogo.astro';
+import DialogoBorrar from '../../components/admin/DialogoBorrar.astro';
+import DialogoGrupo from '../../components/admin/DialogoGrupo.astro';
+import ListaProductos from '../../components/admin/ListaProductos.astro';
+import MenuDesplegable from '../../components/admin/MenuDesplegable.astro';
+import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
+import Obligatorio from '../../components/admin/Obligatorio.astro';
+import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
+import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
+import { borrarImagen, guardarCatalogo, guardarImagen, leerCatalogo } from '../../lib/almacen';
+import { avisoDe, ErrorAdmin, imagen, lista, nuevoId, obligatorio, texto } from '../../lib/formulario';
+
+export const prerender = false;
+
+const catalogo = await leerCatalogo(true);
+let error = '';
+
+if (Astro.request.method === 'POST') {
+	const datos = await Astro.request.formData();
+	const grupo = texto(datos, 'grupo');
+	// La línea puede ser de ataúdes o de urnas.
+	const seccionDe = (id: string) => (catalogo.lineas.some((l) => l.id === id) ? catalogo.lineas : catalogo.urnas);
+	const linea = [...catalogo.lineas, ...catalogo.urnas].find((l) => l.id === grupo);
+	let fotoNueva: string | undefined;
+	try {
+		let aviso = 'guardado';
+		let ancla = grupo;
+		let ver = ''; // renglón guardado: el paginador abre la página donde quedó
+		const fotosABorrar: (string | undefined)[] = [];
+		const accion = texto(datos, 'accion');
+		if (accion !== 'crear-grupo' && !linea) throw new ErrorAdmin('No se encontró la línea. Recarga la página e intenta de nuevo.');
+
+		switch (accion) {
+			case 'crear-grupo': {
+				const seccion = texto(datos, 'seccion') === 'urnas' ? catalogo.urnas : catalogo.lineas;
+				ancla = nuevoId();
+				seccion.push({ id: ancla, linea: obligatorio(datos, 'nombre', 'el nombre'), productos: [] });
+				aviso = 'creado';
+				break;
+			}
+			case 'renombrar': {
+				linea!.linea = obligatorio(datos, 'nombre', 'el nombre');
+				break;
+			}
+			case 'borrar-grupo': {
+				const seccion = seccionDe(grupo);
+				seccion.splice(seccion.indexOf(linea!), 1);
+				fotosABorrar.push(...linea!.productos.map((p) => p.foto));
+				ancla = seccion === catalogo.urnas ? 'urnas' : 'ataudes';
+				aviso = 'grupo-borrado';
+				break;
+			}
+			case 'guardar': {
+				const id = texto(datos, 'id');
+				const existente = linea!.productos.find((p) => p.id === id);
+				if (id && !existente) throw new ErrorAdmin('No se encontró la tarjeta. Recarga la página e intenta de nuevo.');
+				const cambios = { nombre: obligatorio(datos, 'nombre', 'el nombre'), especificaciones: lista(datos, 'especificaciones') };
+				const archivo = imagen(datos);
+				if (archivo) fotoNueva = await guardarImagen(archivo, 'catalogo');
+				ver = existente?.id ?? nuevoId();
+				if (existente) {
+					if (fotoNueva) fotosABorrar.push(existente.foto);
+					Object.assign(existente, cambios, { foto: fotoNueva ?? existente.foto });
+				} else {
+					linea!.productos.push({ id: ver, ...cambios, foto: fotoNueva });
+					aviso = 'agregado';
+				}
+				break;
+			}
+			case 'borrar': {
+				const i = linea!.productos.findIndex((p) => p.id === texto(datos, 'id'));
+				if (i < 0) throw new ErrorAdmin('No se encontró la tarjeta.');
+				fotosABorrar.push(linea!.productos.splice(i, 1)[0].foto);
+				aviso = 'borrado';
+				break;
+			}
+			default:
+				throw new ErrorAdmin('Acción no válida.');
+		}
+
+		await guardarCatalogo(catalogo);
+		await Promise.all(fotosABorrar.map(borrarImagen));
+		return Astro.redirect(`/admin/catalogo?aviso=${aviso}${ver ? `&ver=${ver}` : ''}#${ancla}`, 303);
+	} catch (e) {
+		await borrarImagen(fotoNueva);
+		if (!(e instanceof ErrorAdmin)) console.error(e);
+		error = e instanceof ErrorAdmin ? e.message : 'No se pudieron guardar los cambios. Intenta de nuevo.';
+		Astro.response.status = 400;
+	}
+}
+
+const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.url);
+const secciones = [
+	{ id: 'ataudes' as const, texto: 'Ataúdes', lineas: catalogo.lineas },
+	{ id: 'urnas' as const, texto: 'Urnas', lineas: catalogo.urnas },
+];
+---
+
+<AdminLayout title="Catálogo de ataúdes y urnas" paginaPublica="/catalogo" aviso={aviso}>
+	<main>
+		<HeroInterior antetitulo="Administrar" titulo="Catálogo de ataúdes y urnas">
+			<p class="mt-4 max-w-2xl text-white/85">Crea, renombra o borra líneas y agrega, edita o borra tarjetas. Lo que guardes aparece en la página del catálogo.</p>
+		</HeroInterior>
+
+		<!-- Ataúdes y urnas: se ve una sección a la vez y, dentro, una línea a la vez (menús de flecha) -->
+		{secciones.map((s) => (
+			<section id={s.id} class="scroll-mt-8 bg-white py-16 sm:py-20" data-seccion>
+				<div class="mx-auto max-w-5xl px-4">
+					<MenuDesplegable nivel="seccion" titulo={s.texto} actual={s.id} opciones={secciones} />
+					<ListaProductos seccion={s.id} lineas={s.lineas} />
+				</div>
+			</section>
+		))}
+	</main>
+
+	<DialogoGrupo antetitulo="Línea del catálogo" queEs="la línea" nueva="nueva línea" />
+	<DialogoBorrar />
+
+	<Dialogo id="dialogo-producto" antetitulo="Catálogo">
+		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
+			<input type="hidden" name="accion" value="guardar" />
+			<input type="hidden" name="grupo" />
+			<input type="hidden" name="id" />
+			<NotaObligatorios />
+			<label class={etiqueta}>
+				<span>Nombre <Obligatorio /></span>
+				<input name="nombre" required maxlength="80" class={campo} />
+			</label>
+			<CampoImagen />
+			<CampoLista nombre="especificaciones" titulo="Información" />
+			<button type="submit" class:list={[botonGuardar, 'mt-1']}>Guardar</button>
+		</form>
+	</Dialogo>
+
+	<ScriptAdmin />
+</AdminLayout>

@@ -1,0 +1,27 @@
+---
+// Ventana del admin con el mismo estilo que la de "Hacer pedido" de flores. Se abre con un botón
+// `data-abrir="<id>"` (ver src/components/admin/ScriptAdmin.astro); el contenido va en el slot.
+import Icono from '../Icono.astro';
+
+interface Props {
+	id: string;
+	antetitulo: string;
+}
+
+const { id, antetitulo } = Astro.props;
+---
+
+<dialog id={id} class="m-auto max-h-[92vh] w-[min(92vw,36rem)] rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ciruela/70" aria-labelledby={`${id}-titulo`} data-dialogo>
+	<div class="p-6 sm:p-8">
+		<div class="flex items-start justify-between gap-4">
+			<div>
+				<p class="text-sm font-bold tracking-[0.2em] text-oro-oscuro uppercase">{antetitulo}</p>
+				<h2 id={`${id}-titulo`} class="mt-1 text-xl text-balance" data-dialogo-titulo></h2>
+			</div>
+			<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-ciruela hover:bg-humo" aria-label="Cerrar" data-dialogo-cerrar>
+				<Icono nombre="X" class="size-6" />
+			</button>
+		</div>
+		<slot />
+	</div>
+</dialog>

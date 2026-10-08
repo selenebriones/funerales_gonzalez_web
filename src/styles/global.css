@@ -20,6 +20,9 @@
 	--color-whatsapp: #1f7a4d;
 	--color-whatsapp-oscuro: #17603c;
 
+	/* Asterisco de campo obligatorio en los formularios del admin */
+	--color-rojo: #c0392b;
+
 	/* Neutros */
 	--color-lavanda: #e9e6eb;      /* fondos suaves de sección */
 	--color-humo: #f6f6f6;         /* fondo general */
