@@ -1,0 +1,156 @@
+---
+import type { GetStaticPaths, Page } from 'astro';
+import { Image } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import HeroInterior from '../../components/HeroInterior.astro';
+import Icono from '../../components/Icono.astro';
+import Paginador from '../../components/Paginador.astro';
+import { obituarios as todos, type Obituario } from '../../data/obituarios';
+import { sucursales } from '../../data/sitio';
+
+// 12 por página: /obituarios, /obituarios/2, /obituarios/3...
+export const getStaticPaths = (({ paginate }) => paginate(todos, { pageSize: 12 })) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: Page<Obituario> };
+const obituarios = page.data;
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../../assets/obituarios/*.webp', { eager: true });
+const fotoDe = (nombre?: string) => (nombre ? fotos[`../../assets/obituarios/${nombre}.webp`]?.default : undefined);
+
+// Enlace a Google Maps de la sucursal donde se vela.
+const mapaDe = (sucursal: string) => sucursales.find((s) => s.nombre === sucursal)?.mapa;
+
+const datosDelServicio = (o: Obituario) =>
+	[
+		{ etiqueta: 'Inicia el servicio', valor: o.servicio.inicia, icono: 'Clock' },
+		{ etiqueta: 'Partirá', valor: o.servicio.partira, icono: 'CalendarClock' },
+		{ etiqueta: 'Misa', valor: o.servicio.misa, icono: 'Church' },
+		{ etiqueta: 'Despide en', valor: o.servicio.despide, icono: 'MapPin' },
+	].filter((d) => d.valor) as { etiqueta: string; valor: string; icono: 'Clock' | 'CalendarClock' | 'Church' | 'MapPin' }[];
+---
+
+<Layout
+	title={page.currentPage > 1 ? `Obituarios, página ${page.currentPage} · Funerales González` : 'Obituarios · Funerales González'}
+	description="Consulta horarios de misas y velaciones en las capillas de Funerales González."
+>
+	<main>
+		<HeroInterior antetitulo="Obituarios" titulo="Consulta horarios de misas y velaciones." />
+
+		<section class="bg-white py-20 sm:py-24">
+			<ul class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
+				<!-- Tarjeta: foto en gris con los datos encima y el botón pegado abajo -->
+				{obituarios.map((o, i) => (
+					<li class="flex flex-col overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5">
+						<div class="relative bg-ciruela">
+							{/* Sin foto: cruz del logo en gris, arriba para no chocar con el texto */}
+							{fotoDe(o.foto) ? (
+								<Image
+									src={fotoDe(o.foto)!}
+									alt={`Fotografía de ${o.nombre}`}
+									widths={[320, 480, 640]}
+									sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
+									class="aspect-[3/4] w-full object-cover object-top grayscale"
+								/>
+							) : (
+								<div class="flex aspect-[3/4] w-full justify-center bg-linear-to-b from-tinta to-black pt-[12%]">
+									<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-1/2 w-auto opacity-30 grayscale" />
+								</div>
+							)}
+							<div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/85 via-black/60 to-transparent px-5 pt-20 pb-5 text-center text-white">
+								<h2 class="text-xl leading-snug text-balance text-white">{o.nombre}</h2>
+								<p class="mt-1 font-serif text-oro-claro">{o.nacimiento} – {o.fallecimiento}</p>
+								<p class="mt-2 text-sm text-white/85">{o.sucursal} · {o.sala}</p>
+								<p class="mt-3 flex items-center justify-center gap-1.5 border-t border-white/20 pt-3 text-sm font-semibold text-white">
+									<Icono nombre="CalendarDays" class="size-4 shrink-0 text-oro-claro" />
+									Servicio: {o.servicio.inicia}
+								</p>
+							</div>
+						</div>
+						<button
+							type="button"
+							class="flex w-full items-center justify-center gap-2 bg-oro-oscuro px-4 py-3.5 font-bold text-white transition hover:bg-marca"
+							data-abrir-obituario={i}
+						>
+							<Icono nombre="Info" class="size-5" /> Ver información completa
+						</button>
+					</li>
+				))}
+			</ul>
+			<Paginador pagina={page} />
+		</section>
+	</main>
+
+	<!-- Una ventana por obituario con la información completa -->
+	{obituarios.map((o, i) => (
+		<dialog
+			class="m-auto w-[min(92vw,44rem)] overflow-hidden rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ciruela/80"
+			aria-label={`Información de ${o.nombre}`}
+			data-obituario={i}
+		>
+			<div class="grid sm:grid-cols-[2fr_3fr]">
+				{fotoDe(o.foto) ? (
+					<Image
+						src={fotoDe(o.foto)!}
+						alt={`Fotografía de ${o.nombre}`}
+						widths={[400, 640]}
+						sizes="(min-width: 640px) 280px, 92vw"
+						class="aspect-[4/3] size-full object-cover object-top grayscale sm:aspect-auto"
+					/>
+				) : (
+					<div class="grid aspect-[4/3] size-full place-items-center bg-linear-to-b from-tinta to-black sm:aspect-auto">
+						<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-32 w-auto opacity-30 grayscale" />
+					</div>
+				)}
+				<div class="relative p-6 sm:p-8">
+					<button type="button" class="absolute top-3 right-3 grid size-10 place-items-center rounded-full text-ciruela hover:bg-humo" aria-label="Cerrar" data-cerrar-obituario>
+						<Icono nombre="X" class="size-6" />
+					</button>
+					<p class="text-sm font-bold tracking-[0.2em] text-oro-oscuro uppercase">En memoria de</p>
+					<h2 class="mt-2 pr-8 text-2xl leading-snug text-balance">{o.nombre}</h2>
+					<p class="mt-1 font-serif text-lg text-oro-oscuro">{o.nacimiento} – {o.fallecimiento}</p>
+					<p class="mt-3 flex items-center gap-2 text-tinta/85">
+						<Icono nombre="Building2" class="size-5 shrink-0 text-oro-oscuro" />
+						{o.sucursal} · {o.sala}
+					</p>
+					{mapaDe(o.sucursal) && (
+						<a
+							href={mapaDe(o.sucursal)}
+							target="_blank"
+							rel="noopener"
+							class="mt-4 inline-flex items-center gap-2 rounded-md bg-oro-oscuro px-4 py-2.5 text-sm font-bold text-white transition hover:bg-marca"
+						>
+							<Icono nombre="Map" class="size-4" /> Ver ubicación
+						</a>
+					)}
+
+					<dl class="mt-6 space-y-4 border-t border-black/10 pt-6">
+						{datosDelServicio(o).map((d) => (
+							<div class="flex gap-3">
+								<Icono nombre={d.icono} class="mt-0.5 size-5 shrink-0 text-oro-oscuro" />
+								<div>
+									<dt class="text-xs font-bold tracking-wider text-marca uppercase">{d.etiqueta}</dt>
+									<dd class="mt-0.5 text-tinta">{d.valor}</dd>
+								</div>
+							</div>
+						))}
+					</dl>
+				</div>
+			</div>
+		</dialog>
+	))}
+</Layout>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('[data-abrir-obituario]').forEach((boton) =>
+		boton.addEventListener('click', () => {
+			document.querySelector<HTMLDialogElement>(`[data-obituario="${boton.dataset.abrirObituario}"]`)?.showModal();
+		}),
+	);
+	document.querySelectorAll<HTMLDialogElement>('[data-obituario]').forEach((dialogo) => {
+		dialogo.querySelector('[data-cerrar-obituario]')?.addEventListener('click', () => dialogo.close());
+		// Cerrar al tocar fuera de la ventana
+		dialogo.addEventListener('click', (e) => {
+			if (e.target === dialogo) dialogo.close();
+		});
+	});
+</script>

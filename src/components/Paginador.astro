@@ -1,0 +1,45 @@
+---
+// Paginador para rutas generadas con paginate(); no se muestra si todo cabe en una página.
+import type { Page } from 'astro';
+import Icono from './Icono.astro';
+
+interface Props {
+	pagina: Page;
+}
+
+const { pagina } = Astro.props;
+const numeros = Array.from({ length: pagina.lastPage }, (_, i) => i + 1);
+// La página 1 vive en la ruta base (sin número); las demás en /ruta/n.
+const base = pagina.url.current.replace(/\/\d+\/?$/, '').replace(/\/$/, '') || '/';
+const urlDe = (n: number) => (n === 1 ? base : `${base}/${n}`);
+
+const boton = 'grid h-11 min-w-11 place-items-center rounded-md px-3 font-bold transition';
+---
+
+{pagina.lastPage > 1 && (
+	<nav class="mx-auto mt-14 flex max-w-7xl flex-wrap items-center justify-center gap-2 px-4" aria-label="Páginas">
+		{pagina.url.prev ? (
+			<a href={pagina.url.prev} class:list={[boton, 'text-oro-oscuro ring-1 ring-black/10 hover:bg-marfil']} aria-label="Página anterior">
+				<Icono nombre="ChevronLeft" class="size-5" />
+			</a>
+		) : (
+			<span class:list={[boton, 'text-tinta/30 ring-1 ring-black/5']} aria-hidden="true"><Icono nombre="ChevronLeft" class="size-5" /></span>
+		)}
+
+		{numeros.map((n) =>
+			n === pagina.currentPage ? (
+				<span class:list={[boton, 'bg-oro-oscuro text-white']} aria-current="page">{n}</span>
+			) : (
+				<a href={urlDe(n)} class:list={[boton, 'text-ciruela ring-1 ring-black/10 hover:bg-marfil']} aria-label={`Página ${n}`}>{n}</a>
+			),
+		)}
+
+		{pagina.url.next ? (
+			<a href={pagina.url.next} class:list={[boton, 'text-oro-oscuro ring-1 ring-black/10 hover:bg-marfil']} aria-label="Página siguiente">
+				<Icono nombre="ChevronRight" class="size-5" />
+			</a>
+		) : (
+			<span class:list={[boton, 'text-tinta/30 ring-1 ring-black/5']} aria-hidden="true"><Icono nombre="ChevronRight" class="size-5" /></span>
+		)}
+	</nav>
+)}
