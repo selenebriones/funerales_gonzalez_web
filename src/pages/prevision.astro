@@ -1,0 +1,161 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import Icono from '../components/Icono.astro';
+import Separador from '../components/Separador.astro';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import { gruposDePlanes, incluyenTodos, pesos } from '../data/planes';
+import { whatsappCon } from '../data/sitio';
+
+const beneficios = [
+	{ icono: 'Lock', texto: 'Precio congelado' },
+	{ icono: 'Repeat', texto: 'Plan transferible' },
+	{ icono: 'Infinity', texto: 'Sin límite de edad' },
+	{ icono: 'Building2', texto: 'Instalaciones propias' },
+	{ icono: 'FileText', texto: 'Respaldo mediante contrato' },
+	{ icono: 'CalendarHeart', texto: 'Pagos mensuales sin intereses (hasta 36 meses)' },
+	{ icono: 'BadgePercent', texto: 'Descuento por pago de contado' },
+] as const;
+
+// Datos que la familia debe mandar para cotizar; el mensaje de WhatsApp sale ya armado con estos campos.
+const datosCotizacion = [
+	{ dato: 'Sucursal', detalle: 'Matriz, Oriente o Montemorelos; el precio varía por sucursal.' },
+	{ dato: 'Duración de velación', detalle: '12 o 24 horas.' },
+	{ dato: 'Tipo de servicio', detalle: 'Cremación o inhumación. Con el paquete "Opcional" lo decides al momento de usarlo.' },
+	{ dato: 'Nombre', detalle: 'De quien contrata el plan.' },
+	{ dato: 'Teléfono', detalle: 'Para enviarte la cotización.' },
+	{ dato: 'Ciudad o sucursal de interés', detalle: 'Donde te gustaría recibir el servicio.' },
+];
+
+const mensajeCotizacion = [
+	'Hola, quiero cotizar un plan de previsión.',
+	'',
+	...datosCotizacion.map((d) => `${d.dato}: `),
+].join('\n');
+---
+
+<Layout
+	title="Planes de previsión · Funerales González"
+	description="Planes de previsión funeraria con precio congelado, sin límite de edad y hasta 36 meses sin intereses. Paquetes de inhumación y cremación en Monterrey, Montemorelos e Hidalgo."
+>
+	<main>
+		<HeroInterior antetitulo="Planes de previsión" titulo="Pensar en el mañana también es una forma de cuidar a los tuyos.">
+			<p class="mt-5 max-w-2xl text-lg text-white/85">Protege a tu familia hoy, sin sorpresas ni letras chiquitas.</p>
+		</HeroInterior>
+
+		<!-- Introducción y beneficios -->
+		<section class="bg-white py-20 sm:py-24">
+			<div class="mx-auto max-w-7xl px-4">
+				<TituloSeccion titulo="Beneficios" centrado>
+					<p class="mt-5 text-lg text-tinta/85">
+						Un plan de previsión te permite proteger a tu familia hoy, congelando el costo del servicio y evitando decisiones difíciles en un momento de dolor. Sin límite de edad, con instalaciones propias y respaldo por contrato.
+					</p>
+				</TituloSeccion>
+
+				<ul class="mt-14 flex flex-wrap justify-center gap-6">
+					{beneficios.map((b) => (
+						<li class="flex w-full flex-col items-center rounded-xl bg-marfil px-6 py-8 text-center sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]">
+							<Icono nombre={b.icono} class="size-12 stroke-[1] text-oro-oscuro" />
+							<p class="mt-4 font-serif text-lg font-semibold text-balance text-ciruela">{b.texto}</p>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+
+		<!-- Cotización por WhatsApp: solo explica qué datos enviar -->
+		<section id="cotizar" class="relative isolate scroll-mt-8 overflow-hidden bg-marfil py-20 sm:py-24">
+			<!-- Ilustración translúcida de fondo sobre el marfil de la sección -->
+			<img src="/final_del_camino.webp" alt="" width="1264" height="848" loading="lazy" class="absolute inset-0 -z-10 size-full object-cover opacity-15" />
+			<div class="mx-auto grid max-w-7xl items-center gap-12 px-4 lg:grid-cols-2 lg:gap-20">
+				<div>
+					<TituloSeccion titulo="Cotizador">
+						<p class="mt-5 text-lg text-tinta/85">Envíanos estos datos por WhatsApp y te respondemos con tu cotización. Al tocar el botón se abre el chat con el mensaje listo; solo completa cada dato.</p>
+					</TituloSeccion>
+					<a
+						href={whatsappCon(mensajeCotizacion)}
+						target="_blank"
+						rel="noopener"
+						class="mt-8 inline-flex items-center gap-2 rounded-md bg-whatsapp px-6 py-3.5 font-bold text-white transition hover:bg-whatsapp-oscuro"
+					>
+						<IconoWhatsApp class="size-5" /> Solicitar cotización
+					</a>
+				</div>
+
+				<ol class="space-y-3 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-black/5 sm:p-8">
+					{datosCotizacion.map((d, i) => (
+						<li class="flex gap-4">
+							<span class="grid size-8 shrink-0 place-items-center rounded-full bg-ciruela font-serif text-sm font-semibold text-white">{i + 1}</span>
+							<p class="pt-1 text-tinta/85"><strong class="font-bold text-ciruela">{d.dato}:</strong> {d.detalle}</p>
+						</li>
+					))}
+				</ol>
+			</div>
+		</section>
+
+		<!-- Paquetes -->
+		<section id="planes" class="scroll-mt-8 bg-white py-20 sm:py-24">
+			<div class="mx-auto max-w-5xl px-4">
+				<TituloSeccion titulo="Elige tu plan" centrado>
+					<p class="mt-5 text-lg text-tinta/85">Precio de lista y precio a riguroso contado, en pesos mexicanos.</p>
+				</TituloSeccion>
+
+				<!-- Acordeón por sucursal; todas inician cerradas -->
+				<div class="mt-14 space-y-4">
+					{gruposDePlanes.map((grupo) => (
+						<details class="group overflow-hidden rounded-xl bg-white ring-1 ring-black/10 open:ring-oro-oscuro/40">
+							<summary class="flex cursor-pointer list-none items-center gap-3 p-5 hover:bg-marfil sm:p-6 [&::-webkit-details-marker]:hidden">
+								<Icono nombre="MapPin" class="size-6 shrink-0 text-oro-oscuro" />
+								<h3 class="flex-1 text-xl sm:text-2xl">{grupo.sucursal}</h3>
+								<span class="hidden text-sm text-marca sm:inline">{grupo.planes.length} {grupo.planes.length === 1 ? 'paquete' : 'paquetes'}</span>
+								<Icono nombre="ChevronDown" class="size-6 shrink-0 text-oro-oscuro transition-transform group-open:rotate-180" />
+							</summary>
+							<ul class="divide-y divide-black/10 border-t border-black/10">
+								{grupo.planes.map((plan) => (
+									<li class="grid gap-4 bg-white p-5 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-8 sm:p-6">
+										<div>
+											<p class="font-serif text-lg font-semibold text-ciruela">
+												{plan.tipo} <span class="font-sans text-base font-bold text-oro-oscuro">· {plan.velacion}</span>
+											</p>
+											<p class="mt-1 text-tinta/80">{plan.detalle}</p>
+										</div>
+										<dl class="grid grid-cols-2 gap-6 sm:text-right">
+											<div>
+												<dt class="text-xs font-bold tracking-wider text-marca uppercase">Precio lista</dt>
+												<dd class="mt-0.5 text-lg text-tinta">{pesos(plan.lista)}</dd>
+											</div>
+											<div>
+												<dt class="text-xs font-bold tracking-wider text-marca uppercase">De contado</dt>
+												<dd class="mt-0.5 font-serif text-2xl font-semibold text-oro-oscuro">{pesos(plan.contado)}</dd>
+											</div>
+										</dl>
+									</li>
+								))}
+							</ul>
+						</details>
+					))}
+				</div>
+			</div>
+		</section>
+
+		<!-- Qué incluyen todos los paquetes -->
+		<section class="relative bg-marfil py-20 sm:py-24">
+			<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
+			<div class="mx-auto max-w-5xl px-4">
+				<TituloSeccion titulo="Todos los paquetes incluyen" centrado />
+				<ul class="mt-12 grid gap-x-8 gap-y-3 rounded-2xl bg-white p-8 shadow-sm ring-1 ring-black/5 sm:grid-cols-2 sm:p-10">
+					{incluyenTodos.map((item) => (
+						<li class="flex gap-3 text-tinta">
+							<Icono nombre="Check" class="mt-1 size-4 shrink-0 text-oro-oscuro" />
+							{item}
+						</li>
+					))}
+				</ul>
+				<p class="mx-auto mt-8 max-w-3xl text-center text-tinta/85">
+					Los paquetes de inhumación además incluyen carroza al panteón del área metropolitana. Ninguno incluye destape, flores, esquela, ni los impuestos o el registro correspondientes a la inhumación.
+				</p>
+			</div>
+		</section>
+	</main>
+</Layout>

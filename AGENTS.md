@@ -23,7 +23,7 @@ Rediseño de funeralesgonzalez.com (hoy en Wix) para una funeraria familiar de M
 
 ## Pendiente del cliente
 
-WhatsApp por confirmar (81 1807 2578), precios 2026 e IVA, precios de servicio inmediato, logo en vector, fotos reales, aviso de privacidad, decisión de obituarios (se recomienda módulo propio). Lista completa en el documento de traspaso.
+Precios 2026 e IVA, precios de servicio inmediato, logo en vector, fotos reales, aviso de privacidad, decisión de obituarios (se recomienda módulo propio). Lista completa en el documento de traspaso.
 
 ## Development
 

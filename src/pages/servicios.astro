@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import Icono from '../components/Icono.astro';
+import Separador from '../components/Separador.astro';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import { sitio, whatsappCon } from '../data/sitio';
+
+// Los `ancla` son los destinos de las tarjetas de la portada (/servicios#...); no cambiarlos.
+const servicios = [
+	{ icono: 'Cross', titulo: 'Servicio funerario tradicional / Inhumación', texto: 'Acompañamiento completo para velación e inhumación, con atención personalizada en cada detalle.', ancla: 'inhumacion' },
+	{ icono: 'Flame', titulo: 'Cremación con velación', texto: 'Servicio de cremación precedido por una velación tradicional para despedirse con calma.', ancla: 'cremacion-con-velacion' },
+	{ icono: 'Sunrise', titulo: 'Cremación directa', texto: 'Proceso de cremación sencillo y ágil, para familias que buscan una opción práctica.', ancla: 'cremacion-directa' },
+	{ icono: 'Truck', titulo: 'Traslados nacionales', texto: 'Traslado de restos entre ciudades de México, con todos los trámites incluidos.', ancla: 'traslados' },
+	{ icono: 'Plane', titulo: 'Traslados internacionales', texto: 'Traslado de restos terrestre o aéreo, gestionando la documentación necesaria.', ancla: 'traslados-internacionales' },
+	{ icono: 'HeartHandshake', titulo: 'Recepción de restos', texto: 'Recepción y atención de restos que llegan de otra ciudad o país.', ancla: 'recepcion-de-restos' },
+	{ icono: 'FileText', titulo: 'Asesoría en trámites', texto: 'Te guiamos en actas, permisos y gestiones ante autoridades.', ancla: 'tramites' },
+	// TODO: confirmar redacción exacta y disponibilidad de nichos con el cliente.
+	{ icono: 'Landmark', titulo: 'Nichos privados', texto: 'Espacios disponibles desde 30 cm hasta 60 cm.', ancla: 'nichos' },
+] as const;
+
+const incluye = [
+	'Asesoría para el funeral',
+	'Personal para atención y servicio',
+	'Traslado local de la persona fallecida',
+	'Embalsamamiento',
+	'Arreglo estético (aseo, vestido y maquillado)',
+	'Capilla de velación (12 o 24 hrs, según se elija)',
+	'Servicio de oratorio, sin sacerdote',
+	'Servicio de cafetería básica para los asistentes',
+	'Carroza al panteón (área metropolitana)',
+	'Ataúd metálico básico, incluido en venta',
+];
+
+const noIncluye = ['Pago de destape', 'Flores', 'Esquela', 'Impuesto municipal para inhumación', 'Registro de defunción'];
+---
+
+<Layout
+	title="Servicios funerarios · Funerales González"
+	description="Inhumación, cremación con velación, cremación directa, traslados nacionales e internacionales y crematorio propio en Monterrey, N.L."
+>
+	<main>
+		<HeroInterior antetitulo="Servicios funerarios" titulo="Servicios pensados para acompañarte en cada decisión, con la calidez que mereces" />
+
+		<!-- Catálogo de servicios -->
+		<section class="bg-marfil py-20 sm:py-24">
+			<ul class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
+				{servicios.map((s) => (
+					<li id={s.ancla} class="flex scroll-mt-8 flex-col items-center rounded-xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-black/5 target:ring-2 target:ring-oro-oscuro">
+						<Icono nombre={s.icono} class="size-16 stroke-[0.75] text-ciruela" />
+						<h2 class="mt-5 text-xl text-balance">{s.titulo}</h2>
+						<p class="mt-2 text-tinta/80">{s.texto}</p>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<!-- Paquete de inhumación de uso inmediato -->
+		<section class="bg-white py-20 sm:py-24">
+			<div class="mx-auto max-w-7xl px-4">
+				<TituloSeccion antetitulo="Uso inmediato" titulo="Servicio de inhumación: qué incluye" centrado>
+					<p class="mt-5 text-lg text-marca">Para que sepas desde el principio qué cubre el servicio y qué se gestiona por separado.</p>
+				</TituloSeccion>
+
+				<div class="mt-14 grid gap-6 lg:grid-cols-[3fr_2fr]">
+					<div class="rounded-2xl bg-marfil p-8 sm:p-10">
+						<h3 class="flex items-center gap-3 text-2xl">
+							<span class="grid size-10 place-items-center rounded-full bg-oro-oscuro text-white"><Icono nombre="Check" class="size-5" /></span>
+							Incluye
+						</h3>
+						<ul class="mt-6 grid gap-x-8 gap-y-3 sm:grid-cols-2">
+							{incluye.map((item) => (
+								<li class="flex gap-3 text-tinta">
+									<Icono nombre="Check" class="mt-1 size-4 shrink-0 text-oro-oscuro" />
+									{item}
+								</li>
+							))}
+						</ul>
+					</div>
+
+					<div class="rounded-2xl p-8 ring-1 ring-black/10 sm:p-10">
+						<h3 class="flex items-center gap-3 text-2xl">
+							<span class="grid size-10 place-items-center rounded-full bg-lavanda text-ciruela"><Icono nombre="X" class="size-5" /></span>
+							No incluye
+						</h3>
+						<ul class="mt-6 space-y-3">
+							{noIncluye.map((item) => (
+								<li class="flex gap-3 text-tinta/80">
+									<Icono nombre="Minus" class="mt-1 size-4 shrink-0 text-marca" />
+									{item}
+								</li>
+							))}
+						</ul>
+						<p class="mt-6 border-t border-black/10 pt-5 text-sm text-marca">Estos conceptos se cotizan y pagan por separado. Te orientamos con cada uno.</p>
+					</div>
+				</div>
+
+				<div class="mt-10 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+					<a href={sitio.telefono.href} class="inline-flex items-center justify-center gap-2 rounded-md bg-oro-oscuro px-6 py-3.5 font-bold text-white hover:bg-marca">
+						<Icono nombre="Phone" class="size-5" /> Llamar al {sitio.telefono.mostrar}
+					</a>
+					<a href={whatsappCon('Hola, quiero información sobre el servicio de inhumación.')} target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-md bg-whatsapp px-6 py-3.5 font-bold text-white transition hover:bg-whatsapp-oscuro">
+						<IconoWhatsApp class="size-5" /> Pedir información por WhatsApp
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<!-- Crematorio propio -->
+		<section id="crematorio-propio" class="relative scroll-mt-8 bg-marfil py-20 sm:py-24">
+			<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
+			<div class="mx-auto flex max-w-4xl flex-col items-center gap-6 px-4 text-center">
+				<Icono nombre="ShieldCheck" class="size-16 stroke-[0.75] text-oro-oscuro" />
+				<h2 class="text-3xl sm:text-4xl">Contamos con crematorio propio</h2>
+				<p class="text-lg text-tinta/85">
+					A diferencia de otras funerarias que subcontratan este servicio, en Funerales González garantizamos control, seguridad y seguimiento directo del proceso.
+				</p>
+			</div>
+		</section>
+	</main>
+</Layout>

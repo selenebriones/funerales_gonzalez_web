@@ -6,7 +6,7 @@ import { sitio } from '../../data/sitio';
 
 // TODO: validar el texto exacto de los pasos con el personal operativo (nota del documento de contenido).
 const pasos = [
-	{ titulo: 'Mantén la calma y comunícate con nosotros', texto: `Llámanos al ${sitio.telefono.mostrar} o escríbenos por WhatsApp. Estamos disponibles las 24 horas.` },
+	{ titulo: 'Mantén la calma y comunícate con nosotros', texto: `Llámanos al ${sitio.whatsapp.mostrar} o escríbenos por WhatsApp. Estamos disponibles las 24 horas.` },
 	{ titulo: 'No muevas el cuerpo', texto: 'Si el fallecimiento ocurrió en casa o en la vía pública, nosotros te guiamos sobre cuándo intervienen las autoridades.' },
 	{ titulo: 'Ten a la mano las identificaciones', texto: 'Una identificación oficial de la persona fallecida y del familiar responsable.' },
 	{ titulo: 'Te orientamos en los trámites', texto: 'Acta de defunción, traslados y permisos: te acompañamos en cada gestión.' },
@@ -25,7 +25,7 @@ const pasos = [
 					<Icono nombre="Phone" class="size-5" /> Llamar ahora
 				</a>
 				<a href={sitio.whatsapp.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2 rounded-md bg-whatsapp px-5 py-3 font-bold text-white transition hover:bg-whatsapp-oscuro">
-					<IconoWhatsApp class="size-5" /> WhatsApp
+					<IconoWhatsApp class="size-5" /> Contactar a un agente
 				</a>
 			</div>
 		</div>

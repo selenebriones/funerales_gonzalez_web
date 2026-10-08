@@ -5,7 +5,8 @@ import { navegacion } from '../data/sitio';
 
 export function getStaticPaths() {
 	return navegacion
-		.filter((item) => item.href !== '/')
+		// Secciones que ya tienen página propia.
+		.filter((item) => !['/', '/nosotros', '/servicios', '/prevision', '/sucursales', '/galeria', '/catalogo', '/flores'].includes(item.href))
 		.map((item) => ({ params: { seccion: item.href.slice(1) }, props: { titulo: item.texto } }));
 }
 

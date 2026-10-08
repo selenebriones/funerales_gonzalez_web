@@ -1,36 +1,40 @@
 ---
+import FotoSucursal from '../FotoSucursal.astro';
 import Icono from '../Icono.astro';
+import Separador from '../Separador.astro';
 import TituloSeccion from '../TituloSeccion.astro';
-import { sucursales } from '../../data/sitio';
-
-const tel = (t: string) => `tel:+52${t.replace(/\D/g, '')}`;
+import { sucursales, telHref } from '../../data/sitio';
 ---
 
 <!-- TODO: mapa con las 4 ubicaciones (nota del documento de contenido) -->
-<section class="bg-marfil py-20 sm:py-24">
+<section class="relative bg-marfil py-20 sm:py-24">
+	<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
 	<div class="mx-auto max-w-7xl px-4">
 		<TituloSeccion antetitulo="Sucursales" titulo="Cerca de ti en Monterrey y la región" centrado />
 
 		<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 			{sucursales.map((s) => (
-				<li class="flex flex-col rounded-xl bg-white p-6 shadow-sm ring-1 ring-black/5">
-					<h3 class="text-xl">{s.nombre}</h3>
-					<p class="mt-3 flex flex-1 gap-2 text-sm text-tinta/80">
-						<Icono nombre="MapPin" class="mt-0.5 size-4 shrink-0 text-oro-oscuro" />
-						{s.direccion}
-					</p>
-					<ul class="mt-4 space-y-1">
-						{s.telefonos.map((t) => (
-							<li>
-								<a href={tel(t)} class="inline-flex items-center gap-2 font-semibold text-ciruela hover:text-oro-oscuro">
-									<Icono nombre="Phone" class="size-4 text-oro-oscuro" /> {t}
-								</a>
-							</li>
-						))}
-					</ul>
-					<a href={s.mapa} target="_blank" rel="noopener" class="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-oro-oscuro px-4 py-3 font-bold text-white transition hover:bg-marca">
-						<Icono nombre="Map" class="size-5" /> Ver mapa
-					</a>
+				<li class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:ring-oro-oscuro">
+					<FotoSucursal foto={s.foto} nombre={s.nombre} class="aspect-[4/3] w-full" />
+					<div class="flex flex-1 flex-col p-6">
+						<h3 class="text-xl">{s.nombre}</h3>
+						<p class="mt-3 flex flex-1 gap-2 text-sm text-tinta/80">
+							<Icono nombre="MapPin" class="mt-0.5 size-4 shrink-0 text-oro-oscuro" />
+							{s.direccion}
+						</p>
+						<ul class="mt-4 space-y-1">
+							{s.telefonos.map((t) => (
+								<li>
+									<a href={telHref(t)} class="inline-flex items-center gap-2 font-semibold text-ciruela hover:text-oro-oscuro">
+										<Icono nombre="Phone" class="size-4 text-oro-oscuro" /> {t}
+									</a>
+								</li>
+							))}
+						</ul>
+						<a href={s.mapa} target="_blank" rel="noopener" class="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-oro-oscuro px-4 py-3 font-bold text-white transition hover:bg-marca">
+							<Icono nombre="Map" class="size-5" /> Ver ubicación
+						</a>
+					</div>
 				</li>
 			))}
 		</ul>

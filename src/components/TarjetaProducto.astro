@@ -1,0 +1,55 @@
+---
+// Tarjeta de un ataúd o urna con su foto (o la cruz del logo si aún no hay), especificaciones y botón a WhatsApp.
+import { Image } from 'astro:assets';
+import Icono from './Icono.astro';
+import IconoWhatsApp from './IconoWhatsApp.astro';
+import type { Producto } from '../data/catalogo';
+import { whatsappCon } from '../data/sitio';
+
+interface Props {
+	producto: Producto;
+	tipo: 'ataúd' | 'urna';
+}
+
+const { producto, tipo } = Astro.props;
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/catalogo/*.webp', { eager: true });
+const foto = producto.foto ? fotos[`../assets/catalogo/${producto.foto}.webp`]?.default : undefined;
+const articulo = tipo === 'ataúd' ? 'el ataúd' : 'la urna';
+---
+
+<article class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:ring-oro-oscuro">
+	{foto ? (
+		<Image
+			src={foto}
+			alt={`${tipo === 'ataúd' ? 'Ataúd' : 'Urna'} ${producto.nombre}`}
+			widths={[400, 640, 800]}
+			sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 90vw"
+			class="aspect-[4/3] w-full object-cover"
+		/>
+	) : (
+		<div class="grid aspect-[4/3] w-full place-items-center bg-lavanda">
+			<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />
+		</div>
+	)}
+	<div class="flex flex-1 flex-col p-6">
+		<h4 class="text-xl">{producto.nombre}</h4>
+		{producto.detalle && <p class="text-sm font-semibold text-oro-oscuro">{producto.detalle}</p>}
+		<ul class="mt-3 flex-1 space-y-1.5 text-sm text-tinta/85">
+			{producto.especificaciones.map((e) => (
+				<li class="flex gap-2">
+					<Icono nombre="Check" class="mt-0.5 size-4 shrink-0 text-oro-oscuro" />
+					{e}
+				</li>
+			))}
+		</ul>
+		<a
+			href={whatsappCon(`Hola, me interesa ${articulo} ${producto.nombre}.`)}
+			target="_blank"
+			rel="noopener"
+			class="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-whatsapp px-4 py-3 font-bold text-white transition hover:bg-whatsapp-oscuro"
+		>
+			<IconoWhatsApp class="size-5" /> Hacer pedido
+		</a>
+	</div>
+</article>

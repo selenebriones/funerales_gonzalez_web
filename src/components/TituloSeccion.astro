@@ -1,6 +1,6 @@
 ---
 interface Props {
-	antetitulo: string;
+	antetitulo?: string;
 	titulo: string;
 	centrado?: boolean;
 	oscuro?: boolean;
@@ -10,7 +10,7 @@ const { antetitulo, titulo, centrado = false, oscuro = false } = Astro.props;
 ---
 
 <div class:list={[centrado && 'mx-auto text-center', 'max-w-2xl']}>
-	<p class:list={['text-sm font-bold tracking-[0.2em] uppercase', oscuro ? 'text-oro-claro' : 'text-oro-oscuro']}>{antetitulo}</p>
-	<h2 class:list={['mt-3 text-3xl leading-tight text-balance sm:text-4xl', oscuro && 'text-white']}>{titulo}</h2>
+	{antetitulo && <p class:list={['mb-3 text-sm font-bold tracking-[0.2em] uppercase', oscuro ? 'text-oro-claro' : 'text-oro-oscuro']}>{antetitulo}</p>}
+	<h2 class:list={['text-3xl leading-tight text-balance sm:text-4xl', oscuro && 'text-white']}>{titulo}</h2>
 	<slot />
 </div>

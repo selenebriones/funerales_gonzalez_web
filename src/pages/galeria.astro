@@ -1,0 +1,160 @@
+---
+import { getImage, Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import Icono from '../components/Icono.astro';
+
+// Fotos tomadas de funeralesgonzalez.com/instalaciones. No se sabe a qué sucursal pertenece cada una:
+// este reparto es PROVISIONAL (una fachada y dos interiores por sucursal).
+// TODO (cliente): confirmar o entregar las fotos ya organizadas por sucursal y corregir aquí.
+const archivos = import.meta.glob<{ default: ImageMetadata }>('../assets/galeria/*.webp', { eager: true });
+const foto = (nombre: string) => archivos[`../assets/galeria/${nombre}.webp`].default;
+
+const reparto = [
+	{
+		sucursal: 'Capillas Matriz',
+		fotos: [
+			{ archivo: '01', alt: 'Fachada con la flotilla de carrozas' },
+			{ archivo: '07', alt: 'Sala de estar con sillones de piel' },
+			{ archivo: '11', alt: 'Capilla para servicios religiosos' },
+		],
+	},
+	{
+		sucursal: 'Crematorio y Capillas Oriente',
+		fotos: [
+			{ archivo: '02', alt: 'Fachada y estacionamiento' },
+			{ archivo: '05', alt: 'Sala de descanso con barra para familiares' },
+			{ archivo: '14', alt: 'Oratorio' },
+		],
+	},
+	{
+		sucursal: 'Capillas Montemorelos',
+		fotos: [
+			{ archivo: '04', alt: 'Fachada y estacionamiento techado' },
+			{ archivo: '08', alt: 'Sala de velación' },
+			{ archivo: '13', alt: 'Capilla con celosía de madera' },
+		],
+	},
+	{
+		sucursal: 'Capillas Hidalgo',
+		fotos: [
+			{ archivo: '03', alt: 'Fachada y acceso principal' },
+			{ archivo: '09', alt: 'Sala de velación con sillones' },
+			{ archivo: '10', alt: 'Terraza con mesas para familiares' },
+		],
+	},
+];
+
+const grupos = await Promise.all(
+	reparto.map(async (grupo) => ({
+		sucursal: grupo.sucursal,
+		fotos: await Promise.all(
+			grupo.fotos.map(async (f) => {
+				const imagen = foto(f.archivo);
+				const grande = await getImage({ src: imagen, width: 1280, format: 'webp' });
+				return { imagen, grande: grande.src, alt: f.alt, sucursal: grupo.sucursal };
+			}),
+		),
+	})),
+);
+// Lista plana para el visor: las flechas recorren todas las sucursales en orden.
+const fotos = grupos.flatMap((g) => g.fotos);
+---
+
+<Layout
+	title="Galería · Funerales González"
+	description="Un recorrido visual por las instalaciones de Funerales González: capillas, salas de velación y áreas para familiares."
+>
+	<main>
+		<HeroInterior antetitulo="Galería" titulo="Un recorrido visual por nuestras instalaciones." />
+
+		{grupos.map((grupo, g) => (
+			<section class:list={['py-16 sm:py-20', g % 2 ? 'bg-marfil' : 'bg-white']}>
+				<div class="mx-auto max-w-7xl px-4">
+					<h2 class="flex items-center gap-3 text-2xl sm:text-3xl">
+						<Icono nombre="MapPin" class="size-7 text-oro-oscuro" />
+						{grupo.sucursal}
+					</h2>
+					<!-- Foto principal grande a la izquierda y dos a la derecha -->
+					<ul class="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 lg:grid-rows-2">
+						{grupo.fotos.map((f, k) => (
+							<li class:list={[k === 0 && 'col-span-2 lg:row-span-2']}>
+								<button
+									type="button"
+									class="group relative block size-full overflow-hidden rounded-xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-oro-oscuro"
+									data-foto={fotos.indexOf(f)}
+									aria-label={`Ampliar: ${f.alt}`}
+								>
+									<Image
+										src={f.imagen}
+										alt={f.alt}
+										widths={k === 0 ? [640, 960, 1280] : [400, 640, 800]}
+										sizes={k === 0 ? '(min-width: 1024px) 830px, 100vw' : '(min-width: 1024px) 410px, 50vw'}
+										class="aspect-[4/3] size-full object-cover transition duration-500 group-hover:scale-105"
+									/>
+									<span class="absolute inset-0 grid place-items-center bg-ciruela/0 text-white opacity-0 transition group-hover:bg-ciruela/40 group-hover:opacity-100">
+										<Icono nombre="Expand" class="size-8" />
+									</span>
+								</button>
+							</li>
+						))}
+					</ul>
+				</div>
+			</section>
+		))}
+	</main>
+
+	<!-- Visor de fotos -->
+	<dialog
+		class="m-auto max-h-none max-w-none bg-transparent p-0 backdrop:bg-ciruela/90"
+		aria-label="Foto ampliada"
+		data-visor
+	>
+		<figure class="relative flex flex-col items-center gap-3 px-4">
+			<img src="" alt="" class="max-h-[80vh] w-auto max-w-[min(92vw,1280px)] rounded-lg" data-visor-img />
+			<figcaption class="text-center text-white" data-visor-texto></figcaption>
+		</figure>
+		<button type="button" class="fixed top-4 right-4 grid size-11 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20" data-visor-cerrar aria-label="Cerrar">
+			<Icono nombre="X" class="size-6" />
+		</button>
+		<button type="button" class="fixed top-1/2 left-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:left-6" data-visor-paso="-1" aria-label="Foto anterior">
+			<Icono nombre="ChevronLeft" class="size-7" />
+		</button>
+		<button type="button" class="fixed top-1/2 right-2 grid size-11 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20 sm:right-6" data-visor-paso="1" aria-label="Foto siguiente">
+			<Icono nombre="ChevronRight" class="size-7" />
+		</button>
+	</dialog>
+</Layout>
+
+<script is:inline define:vars={{ fotos: fotos.map((f) => ({ src: f.grande, alt: `${f.sucursal} · ${f.alt}` })) }}>
+	const visor = document.querySelector('[data-visor]');
+	const img = visor.querySelector('[data-visor-img]');
+	const texto = visor.querySelector('[data-visor-texto]');
+	let actual = 0;
+
+	const mostrar = (i) => {
+		actual = (i + fotos.length) % fotos.length;
+		img.src = fotos[actual].src;
+		img.alt = fotos[actual].alt;
+		texto.textContent = `${fotos[actual].alt} · ${actual + 1} de ${fotos.length}`;
+	};
+
+	document.querySelectorAll('[data-foto]').forEach((boton) =>
+		boton.addEventListener('click', () => {
+			mostrar(Number(boton.dataset.foto));
+			visor.showModal();
+		}),
+	);
+	visor.querySelectorAll('[data-visor-paso]').forEach((boton) =>
+		boton.addEventListener('click', () => mostrar(actual + Number(boton.dataset.visorPaso))),
+	);
+	visor.querySelector('[data-visor-cerrar]').addEventListener('click', () => visor.close());
+	// Cerrar al tocar fuera de la foto
+	visor.addEventListener('click', (e) => {
+		if (e.target === visor || e.target.tagName === 'FIGURE') visor.close();
+	});
+	visor.addEventListener('keydown', (e) => {
+		if (e.key === 'ArrowLeft') mostrar(actual - 1);
+		if (e.key === 'ArrowRight') mostrar(actual + 1);
+	});
+</script>

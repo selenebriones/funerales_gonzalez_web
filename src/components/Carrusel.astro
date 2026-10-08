@@ -1,0 +1,52 @@
+---
+// Carrusel horizontal con scroll-snap: se desliza con el dedo en móvil y con las flechas en escritorio.
+// Cada hijo del slot debe ser un <li>.
+interface Props {
+	etiqueta: string;
+}
+
+const { etiqueta } = Astro.props;
+---
+
+<div class="relative" data-carrusel>
+	<ul
+		class="-mx-4 flex snap-x snap-mandatory scroll-px-4 gap-5 overflow-x-auto scroll-smooth px-4 pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&>li]:w-[85%] [&>li]:shrink-0 [&>li]:snap-start sm:[&>li]:w-[calc(50%-0.625rem)] lg:[&>li]:w-[calc(33.333%-0.834rem)]"
+		aria-label={etiqueta}
+		data-carrusel-pista
+	>
+		<slot />
+	</ul>
+	<div class="mt-4 flex justify-end gap-3">
+		<button type="button" class="grid size-11 place-items-center rounded-full bg-white text-oro-oscuro shadow-sm ring-1 ring-black/10 transition hover:bg-oro-oscuro hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-oro-oscuro" data-carrusel-paso="-1" aria-label="Anterior">
+			<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m15 18-6-6 6-6" /></svg>
+		</button>
+		<button type="button" class="grid size-11 place-items-center rounded-full bg-white text-oro-oscuro shadow-sm ring-1 ring-black/10 transition hover:bg-oro-oscuro hover:text-white disabled:opacity-40 disabled:hover:bg-white disabled:hover:text-oro-oscuro" data-carrusel-paso="1" aria-label="Siguiente">
+			<svg class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m9 18 6-6-6-6" /></svg>
+		</button>
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-carrusel]').forEach((carrusel) => {
+		const pista = carrusel.querySelector<HTMLElement>('[data-carrusel-pista]')!;
+		const botones = carrusel.querySelectorAll<HTMLButtonElement>('[data-carrusel-paso]');
+
+		// Desactiva las flechas en los extremos.
+		const actualizar = () => {
+			const fin = pista.scrollWidth - pista.clientWidth - 2;
+			botones[0].disabled = pista.scrollLeft <= 2;
+			botones[1].disabled = pista.scrollLeft >= fin;
+		};
+
+		botones.forEach((boton) =>
+			boton.addEventListener('click', () => {
+				const tarjeta = pista.querySelector<HTMLElement>('li');
+				const paso = tarjeta ? tarjeta.offsetWidth + 20 : pista.clientWidth;
+				pista.scrollBy({ left: paso * Number(boton.dataset.carruselPaso) });
+			}),
+		);
+		pista.addEventListener('scroll', actualizar, { passive: true });
+		window.addEventListener('resize', actualizar);
+		actualizar();
+	});
+</script>

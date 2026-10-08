@@ -1,0 +1,172 @@
+---
+import { Image } from 'astro:assets';
+import Layout from '../layouts/Layout.astro';
+import Carrusel from '../components/Carrusel.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import Icono from '../components/Icono.astro';
+import IconoWhatsApp from '../components/IconoWhatsApp.astro';
+import Separador from '../components/Separador.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import { categoriasDeFlores, type Arreglo } from '../data/flores';
+import { pesos } from '../data/planes';
+import { sucursales, whatsappCon } from '../data/sitio';
+
+const fotos = import.meta.glob<{ default: ImageMetadata }>('../assets/flores/*.webp', { eager: true });
+const fotoDe = (a: Arreglo) => (a.foto ? fotos[`../assets/flores/${a.foto}.webp`]?.default : undefined);
+
+// Con foto primero; dentro de cada grupo se respeta el orden del documento.
+const conFotoPrimero = (arreglos: Arreglo[]) => [...arreglos].sort((a, b) => Number(!!b.foto) - Number(!!a.foto));
+
+// El formulario de pedido arma el mensaje y abre WhatsApp; el sitio no guarda los datos.
+const whatsappBase = whatsappCon('');
+const campo = 'rounded-md border border-black/15 bg-white px-3 py-2.5 font-normal text-tinta focus:border-oro-oscuro focus:outline-none';
+---
+
+<Layout
+	title="Flores · Funerales González"
+	description="Bouquets, arreglos, canastas, coronas y cruces florales con entrega en nuestras salas de velación. Pide por WhatsApp."
+>
+	<main>
+		<HeroInterior antetitulo="Flores" titulo="Elige con tranquilidad, nosotros te guiamos en cada opción." />
+
+		{categoriasDeFlores.map((grupo, g) => (
+			<section class:list={['relative py-20 sm:py-24', g % 2 ? 'bg-marfil' : 'bg-white']}>
+				{g % 2 === 1 && <Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />}
+				<div class="mx-auto max-w-7xl px-4">
+					<TituloSeccion titulo={grupo.categoria} centrado />
+					<div class="mt-12">
+						{(() => {
+							const tarjetas = conFotoPrimero(grupo.arreglos).map((arreglo) => {
+								const foto = fotoDe(arreglo);
+								return (
+									<li>
+										<article class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:ring-oro-oscuro">
+											{foto ? (
+												<Image src={foto} alt={arreglo.nombre} widths={[400, 640]} sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 90vw" class="aspect-[5/4] w-full object-cover" />
+											) : (
+												<div class="grid aspect-[5/4] w-full place-items-center bg-lavanda">
+													<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />
+												</div>
+											)}
+											<div class="flex flex-1 flex-col p-6">
+												<h3 class="flex-1 text-lg text-balance">{arreglo.nombre}</h3>
+												<p class="mt-3 font-serif text-2xl font-semibold text-oro-oscuro">{pesos(arreglo.precio)}</p>
+												<button
+													type="button"
+													class="mt-5 flex w-full items-center justify-center gap-2 rounded-md bg-whatsapp px-4 py-3 font-bold text-white transition hover:bg-whatsapp-oscuro"
+													data-pedido={`${arreglo.nombre} (${pesos(arreglo.precio)})`}
+												>
+													<IconoWhatsApp class="size-5" /> Hacer pedido
+												</button>
+											</div>
+										</article>
+									</li>
+								);
+							});
+							return grupo.arreglos.length > 3 ? (
+								<Carrusel etiqueta={grupo.categoria}>{tarjetas}</Carrusel>
+							) : (
+								<ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{tarjetas}</ul>
+							);
+						})()}
+					</div>
+				</div>
+			</section>
+		))}
+	</main>
+
+	<!-- Formulario de pedido: se abre desde "Hacer pedido" y al enviarlo abre WhatsApp con el pedido escrito -->
+	<dialog class="m-auto w-[min(92vw,32rem)] rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ciruela/70" aria-labelledby="pedido-titulo" data-pedido-dialogo>
+		<form class="p-6 sm:p-8" data-pedido-form>
+			<div class="flex items-start justify-between gap-4">
+				<div>
+					<p class="text-sm font-bold tracking-[0.2em] text-oro-oscuro uppercase">Hacer pedido</p>
+					<h2 id="pedido-titulo" class="mt-1 text-xl text-balance" data-pedido-arreglo></h2>
+				</div>
+				<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-ciruela hover:bg-humo" aria-label="Cerrar" data-pedido-cerrar>
+					<Icono nombre="X" class="size-6" />
+				</button>
+			</div>
+
+			<div class="mt-6 grid gap-4">
+				<label class="grid gap-1.5 text-sm font-semibold text-ciruela">
+					Nombre
+					<input name="nombre" required autocomplete="name" class={campo} />
+				</label>
+				<label class="grid gap-1.5 text-sm font-semibold text-ciruela">
+					Teléfono
+					<input name="telefono" type="tel" required autocomplete="tel" class={campo} />
+				</label>
+				<label class="grid gap-1.5 text-sm font-semibold text-ciruela">
+					Nombre del familiar o persona fallecida
+					<input name="fallecido" required class={campo} />
+				</label>
+				<div class="grid gap-4 sm:grid-cols-2">
+					<!-- min-w-0 y w-full: sin ellos el select toma el ancho de la opción más larga y se encima -->
+					<label class="grid min-w-0 gap-1.5 text-sm font-semibold text-ciruela">
+						Sucursal
+						<select name="sucursal" required class:list={[campo, 'w-full min-w-0']}>
+							<option value="">Elige una</option>
+							{sucursales.map((s) => <option>{s.nombre}</option>)}
+						</select>
+					</label>
+					<label class="grid min-w-0 gap-1.5 text-sm font-semibold text-ciruela">
+						Sala de velación
+						<input name="sala" class={campo} />
+					</label>
+				</div>
+				<label class="grid gap-1.5 text-sm font-semibold text-ciruela">
+					Mensaje personalizado (tarjeta o banda)
+					<textarea name="mensaje" rows="3" class={campo}></textarea>
+				</label>
+			</div>
+
+			<button type="submit" class="mt-6 flex w-full items-center justify-center gap-2 rounded-md bg-whatsapp px-4 py-3.5 font-bold text-white transition hover:bg-whatsapp-oscuro">
+				<IconoWhatsApp class="size-5" /> Enviar pedido por WhatsApp
+			</button>
+			<p class="mt-3 text-center text-xs text-marca">Se abrirá WhatsApp con tu pedido listo para enviar.</p>
+		</form>
+	</dialog>
+</Layout>
+
+<script is:inline define:vars={{ whatsappBase }}>
+	const dialogo = document.querySelector('[data-pedido-dialogo]');
+	const form = dialogo.querySelector('[data-pedido-form]');
+	const titulo = dialogo.querySelector('[data-pedido-arreglo]');
+	let arreglo = '';
+
+	document.querySelectorAll('[data-pedido]').forEach((boton) =>
+		boton.addEventListener('click', () => {
+			arreglo = boton.dataset.pedido;
+			titulo.textContent = arreglo;
+			dialogo.showModal();
+		}),
+	);
+	dialogo.querySelector('[data-pedido-cerrar]').addEventListener('click', () => dialogo.close());
+	// Cerrar al tocar fuera de la ventana
+	dialogo.addEventListener('click', (e) => {
+		if (e.target === dialogo) dialogo.close();
+	});
+
+	form.addEventListener('submit', (e) => {
+		e.preventDefault();
+		const d = new FormData(form);
+		// Los campos opcionales solo se agregan si se llenaron.
+		const opcional = (etiqueta, valor) => (String(valor ?? '').trim() ? [`${etiqueta}: ${valor}`] : []);
+		const lineas = [
+			'Hola, quiero hacer un pedido de flores.',
+			'',
+			`Arreglo: ${arreglo}`,
+			`Nombre: ${d.get('nombre')}`,
+			`Teléfono: ${d.get('telefono')}`,
+			`Familiar o persona fallecida: ${d.get('fallecido')}`,
+			`Sucursal: ${d.get('sucursal')}`,
+			...opcional('Sala de velación', d.get('sala')),
+			...opcional('Mensaje personalizado (tarjeta o banda)', d.get('mensaje')),
+		];
+		window.open(whatsappBase + encodeURIComponent(lineas.join('\n')), '_blank', 'noopener');
+		dialogo.close();
+		form.reset();
+	});
+</script>
+

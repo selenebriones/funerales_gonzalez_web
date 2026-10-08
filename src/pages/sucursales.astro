@@ -1,0 +1,85 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import FotoSucursal from '../components/FotoSucursal.astro';
+import Icono from '../components/Icono.astro';
+import Separador from '../components/Separador.astro';
+import TituloSeccion from '../components/TituloSeccion.astro';
+import { sucursales, telHref } from '../data/sitio';
+
+// TODO (cliente): confirmar la lista de instalaciones; también si "Oratorio" y "Sabinas" son ubicaciones
+// y si el crematorio opera dentro de la Matriz (por ahora no se muestra como ubicación).
+const instalaciones = [
+	{ icono: 'DoorClosed', texto: 'Salas de velación privadas' },
+	{ icono: 'AirVent', texto: 'Aire acondicionado' },
+	{ icono: 'CircleParking', texto: 'Estacionamiento propio' },
+	{ icono: 'Coffee', texto: 'Área de cafetería / servicio a familiares' },
+	{ icono: 'Accessibility', texto: 'Accesibilidad para personas con movilidad reducida' },
+	{ icono: 'ShieldCheck', texto: 'Seguridad y vigilancia' },
+	{ icono: 'Church', texto: 'Capilla para servicios religiosos' },
+	{ icono: 'Snowflake', texto: 'Cámaras de refrigeración' },
+] as const;
+---
+
+<Layout
+	title="Sucursales · Funerales González"
+	description="Capillas Matriz y Oriente en Monterrey, Capillas Montemorelos y Capillas Hidalgo, N.L. Direcciones, teléfonos y cómo llegar."
+>
+	<main>
+		<HeroInterior antetitulo="Sucursales" titulo="Conoce nuestras instalaciones y cómo llegar a cada una." />
+
+		<!-- Sucursales con su foto -->
+		<section class="bg-white py-20 sm:py-24">
+			<ul class="mx-auto max-w-7xl space-y-8 px-4">
+				{sucursales.map((s) => (
+					<li class="grid overflow-hidden rounded-2xl bg-marfil ring-1 ring-transparent transition hover:ring-oro-oscuro lg:grid-cols-2">
+						<div class="flex flex-col justify-center p-8 sm:p-10">
+							<h2 class="text-2xl sm:text-3xl">{s.nombre}</h2>
+							<p class="mt-4 flex gap-3 text-tinta/85">
+								<Icono nombre="MapPin" class="mt-0.5 size-5 shrink-0 text-oro-oscuro" />
+								{s.direccion}
+							</p>
+							<ul class="mt-4 space-y-2">
+								{s.telefonos.map((t) => (
+									<li>
+										<a href={telHref(t)} class="inline-flex items-center gap-3 text-lg font-semibold text-ciruela hover:text-oro-oscuro">
+											<Icono nombre="Phone" class="size-5 text-oro-oscuro" /> {t}
+										</a>
+									</li>
+								))}
+							</ul>
+							<a
+								href={s.mapa}
+								target="_blank"
+								rel="noopener"
+								class="mt-8 inline-flex items-center justify-center gap-2 self-start rounded-md bg-oro-oscuro px-6 py-3 font-bold text-white transition hover:bg-marca"
+							>
+								<Icono nombre="Map" class="size-5" /> Ver ubicación
+							</a>
+						</div>
+						<!-- La foto no define la altura: la tarjeta mide lo que ocupan sus datos -->
+						<div class="relative aspect-[4/3] lg:aspect-auto lg:min-h-88">
+							<FotoSucursal foto={s.foto} nombre={s.nombre} class="absolute inset-0 size-full" />
+						</div>
+					</li>
+				))}
+			</ul>
+		</section>
+
+		<!-- Instalaciones -->
+		<section class="relative bg-marfil py-20 sm:py-24">
+			<Separador class="absolute inset-x-0 top-0 mx-auto max-w-7xl -translate-y-1/2 px-4" />
+			<div class="mx-auto max-w-7xl px-4">
+				<TituloSeccion titulo="Nuestras instalaciones cuentan con:" centrado />
+				<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+					{instalaciones.map((i) => (
+						<li class="flex flex-col items-center rounded-xl bg-white px-6 py-8 text-center shadow-sm ring-1 ring-black/5">
+							<Icono nombre={i.icono} class="size-12 stroke-[1] text-oro-oscuro" />
+							<p class="mt-4 font-serif text-lg font-semibold text-balance text-ciruela">{i.texto}</p>
+						</li>
+					))}
+				</ul>
+			</div>
+		</section>
+	</main>
+</Layout>
