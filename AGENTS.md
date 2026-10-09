@@ -12,7 +12,7 @@ Rediseño de funeralesgonzalez.com (hoy en Wix) para una funeraria familiar de M
 ## Convenciones
 
 - Textos en español de México (`lang="es-MX"`), tuteando ("Estamos contigo", "Llámanos"). Solo el lema del logo va en usted.
-- Colores y fuentes solo con los tokens de `src/styles/global.css` (`marca`, `oro`, `oro-oscuro`, `oro-claro`, `ciruela`, `lavanda`, `humo`, `marfil`, `tinta`, `whatsapp`, `rojo` (solo para el asterisco de campo obligatorio del admin); `font-serif` = Lora para titulares, `font-sans` = Nunito Sans). Nada de colores sueltos de Tailwind. Texto blanco pequeño nunca sobre `oro` (contraste insuficiente): usar `oro-oscuro`.
+- Colores y fuentes solo con los tokens de `src/styles/global.css` (`marca`, `oro`, `oro-oscuro`, `oro-claro`, `ciruela`, `lavanda`, `humo`, `marfil`, `tinta`, `whatsapp`, `chocolate`, `pie` y `menu` (fondos del pie y de la barra del menú; en `global.css` está anotado su valor anterior por si hay que volver), `rojo` (solo para el asterisco de campo obligatorio del admin); `font-serif` = Lora para titulares, `font-sans` = Nunito Sans). Nada de colores sueltos de Tailwind. Texto blanco pequeño nunca sobre `oro` (contraste insuficiente): usar `oro-oscuro`.
 - Teléfonos, WhatsApp, sucursales y menú viven solo en `src/data/sitio.ts`; no escribirlos a mano en los componentes.
 - Iconos con `<Icono nombre="..." />` (Lucide vía `lucide-static`).
 - Encabezados de sección con `<TituloSeccion antetitulo titulo />`.

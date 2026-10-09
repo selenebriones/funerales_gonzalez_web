@@ -15,6 +15,14 @@
 	--color-oro-oscuro: #80490a;   /* marrón cálido: pie, enlaces, bordes */
 	--color-ciruela: #281a39;      /* morado profundo: titulares y texto fuerte */
 	--color-oro-claro: #d9b46c;    /* dorado claro: acentos sobre fondos oscuros */
+	--color-chocolate: #2a1c13;    /* café muy oscuro: pie y barra del menú (desde 2026-10-09) */
+
+	/*
+	 * Fondos del pie y de la barra del menú. Cambio en prueba: si el cliente pide volver a los
+	 * colores anteriores, basta con poner aquí los valores de "Antes".
+	 */
+	--color-pie: var(--color-chocolate);   /* Antes: var(--color-ciruela), #281a39 */
+	--color-menu: var(--color-chocolate);  /* Antes: var(--color-marca), #634e3c */
 
 	/* Botones de WhatsApp (verde con contraste suficiente para texto blanco) */
 	--color-whatsapp: #1f7a4d;
