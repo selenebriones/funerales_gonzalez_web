@@ -69,5 +69,6 @@ export const navegacion = [
 	{ texto: 'Sucursales', href: '/sucursales' },
 	{ texto: 'Obituarios', href: '/obituarios' },
 	{ texto: 'Galería', href: '/galeria' },
-	{ texto: 'Contacto', href: '/contacto' },
+	// Contacto no tiene página: lleva al pie (id="contacto") de la página en la que se esté.
+	{ texto: 'Contacto', href: '#contacto' },
 ];

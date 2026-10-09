@@ -5,8 +5,8 @@ import { navegacion } from '../data/sitio';
 
 export function getStaticPaths() {
 	return navegacion
-		// Secciones que ya tienen página propia.
-		.filter((item) => !['/', '/nosotros', '/servicios', '/prevision', '/sucursales', '/galeria', '/catalogo', '/flores', '/obituarios'].includes(item.href))
+		// Secciones que ya tienen página propia; los enlaces a anclas (#contacto) no son páginas.
+		.filter((item) => item.href.startsWith('/') && !['/', '/nosotros', '/servicios', '/prevision', '/sucursales', '/galeria', '/catalogo', '/flores', '/obituarios'].includes(item.href))
 		.map((item) => ({ params: { seccion: item.href.slice(1) }, props: { titulo: item.texto } }));
 }
 
