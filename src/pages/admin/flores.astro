@@ -12,7 +12,6 @@ import FilaAdmin from '../../components/admin/FilaAdmin.astro';
 import MenuDesplegable from '../../components/admin/MenuDesplegable.astro';
 import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
 import Obligatorio from '../../components/admin/Obligatorio.astro';
-import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
 import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
 import { pesos } from '../../data/planes';
 import { borrarImagen, guardarFlores, guardarImagen, leerFlores } from '../../lib/almacen';
@@ -127,9 +126,9 @@ const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.u
 						>
 							<Icono nombre="Pencil" class="size-4" /> Editar
 						</button>
+						<BotonAgregar texto="Agregar arreglo" dialogo="dialogo-arreglo" valores={{ grupo: c.id, id: '' }} />
 					</div>
-					<BotonAgregar texto="Agregar arreglo" dialogo="dialogo-arreglo" valores={{ grupo: c.id, id: '' }} class="mt-6" />
-					<ul class="mt-3 grid gap-3" data-paginar>
+					<ul class="mt-6 grid gap-3" data-paginar>
 						{c.arreglos.map((a) => (
 							<FilaAdmin
 								nombre={a.nombre}
@@ -165,15 +164,14 @@ const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.u
 		)}
 	</main>
 
-	<DialogoGrupo antetitulo="Categoría de flores" queEs="la categoría" nueva="nueva categoría" />
+	<DialogoGrupo queEs="la categoría" nueva="nueva categoría" />
 	<DialogoBorrar />
 
-	<Dialogo id="dialogo-arreglo" antetitulo="Flores">
+	<Dialogo id="dialogo-arreglo">
 		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
 			<input type="hidden" name="accion" value="guardar" />
 			<input type="hidden" name="grupo" />
 			<input type="hidden" name="id" />
-			<NotaObligatorios />
 			<label class={etiqueta}>
 				<span>Nombre <Obligatorio /></span>
 				<input name="nombre" required maxlength="120" class={campo} />

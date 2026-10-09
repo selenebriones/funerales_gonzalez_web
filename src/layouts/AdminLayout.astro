@@ -3,6 +3,7 @@
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo-color.webp';
+import Footer from '../components/Footer.astro';
 import Icono from '../components/Icono.astro';
 
 interface Props {
@@ -90,6 +91,7 @@ const menu = [
 		)}
 
 		<slot />
+		<Footer />
 
 		<script>
 			// El aviso se oculta solo y se quita "?aviso=" de la URL para que no reaparezca al recargar.

@@ -11,7 +11,6 @@ import ListaProductos from '../../components/admin/ListaProductos.astro';
 import MenuDesplegable from '../../components/admin/MenuDesplegable.astro';
 import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
 import Obligatorio from '../../components/admin/Obligatorio.astro';
-import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
 import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
 import { borrarImagen, guardarCatalogo, guardarImagen, leerCatalogo } from '../../lib/almacen';
 import { avisoDe, ErrorAdmin, imagen, lista, nuevoId, obligatorio, texto } from '../../lib/formulario';
@@ -119,15 +118,14 @@ const secciones = [
 		))}
 	</main>
 
-	<DialogoGrupo antetitulo="Línea del catálogo" queEs="la línea" nueva="nueva línea" />
+	<DialogoGrupo queEs="la línea" nueva="nueva línea" />
 	<DialogoBorrar />
 
-	<Dialogo id="dialogo-producto" antetitulo="Catálogo">
+	<Dialogo id="dialogo-producto">
 		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
 			<input type="hidden" name="accion" value="guardar" />
 			<input type="hidden" name="grupo" />
 			<input type="hidden" name="id" />
-			<NotaObligatorios />
 			<label class={etiqueta}>
 				<span>Nombre <Obligatorio /></span>
 				<input name="nombre" required maxlength="80" class={campo} />

@@ -1,27 +1,29 @@
 ---
-// Ventana del admin con el mismo estilo que la de "Hacer pedido" de flores. Se abre con un botón
-// `data-abrir="<id>"` (ver src/components/admin/ScriptAdmin.astro); el contenido va en el slot.
+// Ventana del admin. Se abre con un botón `data-abrir="<id>"` (ver src/components/admin/ScriptAdmin.astro), que pone
+// el título; el contenido va en el slot. El título va en una barra fija arriba que no se mueve al bajar en
+// formularios largos.
 import Icono from '../Icono.astro';
 
 interface Props {
 	id: string;
-	antetitulo: string;
 }
 
-const { id, antetitulo } = Astro.props;
+const { id } = Astro.props;
 ---
 
-<dialog id={id} class="m-auto max-h-[92vh] w-[min(92vw,36rem)] rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ciruela/70" aria-labelledby={`${id}-titulo`} data-dialogo>
-	<div class="p-6 sm:p-8">
-		<div class="flex items-start justify-between gap-4">
-			<div>
-				<p class="text-sm font-bold tracking-[0.2em] text-oro-oscuro uppercase">{antetitulo}</p>
-				<h2 id={`${id}-titulo`} class="mt-1 text-xl text-balance" data-dialogo-titulo></h2>
-			</div>
-			<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-ciruela hover:bg-humo" aria-label="Cerrar" data-dialogo-cerrar>
-				<Icono nombre="X" class="size-6" />
-			</button>
-		</div>
+<dialog
+	id={id}
+	class="m-auto max-h-[92vh] w-[min(92vw,36rem)] overflow-y-auto rounded-2xl bg-white p-0 shadow-xl backdrop:bg-ciruela/70"
+	aria-labelledby={`${id}-titulo`}
+	data-dialogo
+>
+	<div class="sticky top-0 z-10 flex items-center justify-between gap-4 bg-ciruela py-3 pr-3 pl-6 sm:pl-8">
+		<h2 id={`${id}-titulo`} class="text-xl text-balance text-white" data-dialogo-titulo></h2>
+		<button type="button" class="grid size-10 shrink-0 place-items-center rounded-full text-white hover:bg-white/15" aria-label="Cerrar" data-dialogo-cerrar>
+			<Icono nombre="X" class="size-6" />
+		</button>
+	</div>
+	<div class="px-6 pb-6 sm:px-8 sm:pb-8">
 		<slot />
 	</div>
 </dialog>
