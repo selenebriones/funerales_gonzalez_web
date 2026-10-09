@@ -11,7 +11,6 @@ import DialogoBorrar from '../../components/admin/DialogoBorrar.astro';
 import FilaAdmin from '../../components/admin/FilaAdmin.astro';
 import ScriptAdmin from '../../components/admin/ScriptAdmin.astro';
 import Obligatorio from '../../components/admin/Obligatorio.astro';
-import NotaObligatorios from '../../components/admin/NotaObligatorios.astro';
 import { botonGuardar, campo, etiqueta } from '../../components/admin/estilos';
 import { anio, textoMomento, type Momento, type Obituario } from '../../data/obituarios';
 import { sucursales } from '../../data/sitio';
@@ -133,7 +132,7 @@ const momentoPlano = (prefijo: string, m: Momento) => {
 const valoresDe = (o: Obituario) => ({
 	id: o.id,
 	nombre: o.nombre,
-	// El contenido inicial solo trae el año: el campo de fecha queda vacío para completarlo.
+	// Si se guardó solo el año (versiones anteriores del contenido inicial), el campo queda vacío para completarlo.
 	nacimiento: o.nacimiento.length === 10 ? o.nacimiento : '',
 	fallecimiento: o.fallecimiento.length === 10 ? o.fallecimiento : '',
 	capilla: o.capilla,
@@ -156,8 +155,8 @@ const valoresDe = (o: Obituario) => ({
 
 		<section class="bg-white py-16 sm:py-20">
 			<div class="mx-auto max-w-5xl px-4">
-				<BotonAgregar texto="Agregar obituario" titulo="Nuevo obituario" dialogo="dialogo-obituario" valores={{ id: '' }} class="py-6" />
-				<label class="mt-8 flex items-center gap-3 rounded-xl bg-humo px-4 py-1 ring-1 ring-black/10 focus-within:ring-oro-oscuro">
+				<BotonAgregar texto="Agregar obituario" titulo="Nuevo obituario" dialogo="dialogo-obituario" valores={{ id: '' }} />
+				<label class="mt-5 flex items-center gap-3 rounded-xl bg-humo px-4 py-1 ring-1 ring-black/10 focus-within:ring-oro-oscuro">
 					<Icono nombre="Search" class="size-5 shrink-0 text-oro-oscuro" />
 					<span class="sr-only">Buscar por nombre</span>
 					<input type="search" placeholder="Buscar por nombre" class="w-full bg-transparent py-2.5 text-tinta focus:outline-none" data-buscar="obituarios" />
@@ -168,7 +167,6 @@ const valoresDe = (o: Obituario) => ({
 							nombre={o.nombre}
 							foto={o.foto}
 							nota={`${anio(o.nacimiento)} – ${anio(o.fallecimiento)} · ${o.capilla} · ${o.sala} · Servicio: ${textoMomento(o.inicio)}`}
-							obituario
 							editar={{ dialogo: 'dialogo-obituario', titulo: 'Editar obituario', valores: valoresDe(o) }}
 							borrar={{ id: o.id }}
 						/>
@@ -181,11 +179,10 @@ const valoresDe = (o: Obituario) => ({
 
 	<DialogoBorrar />
 
-	<Dialogo id="dialogo-obituario" antetitulo="Obituario">
+	<Dialogo id="dialogo-obituario">
 		<form method="post" enctype="multipart/form-data" class="mt-6 grid gap-5">
 			<input type="hidden" name="accion" value="guardar" />
 			<input type="hidden" name="id" />
-			<NotaObligatorios />
 			<label class={etiqueta}>
 				<span>Nombre <Obligatorio /></span>
 				<input name="nombre" required maxlength="120" class={campo} />

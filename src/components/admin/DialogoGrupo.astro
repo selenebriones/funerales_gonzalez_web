@@ -9,17 +9,16 @@ import Obligatorio from './Obligatorio.astro';
 import { botonGuardar, campo, etiqueta } from './estilos';
 
 interface Props {
-	antetitulo: string;
 	/** "la línea" o "la categoría", para el botón de borrar. */
 	queEs: string;
 	/** "nueva línea" o "nueva categoría", para el botón de agregar. */
 	nueva: string;
 }
 
-const { antetitulo, queEs, nueva } = Astro.props;
+const { queEs, nueva } = Astro.props;
 ---
 
-<Dialogo id="dialogo-grupo" antetitulo={antetitulo}>
+<Dialogo id="dialogo-grupo">
 	<form method="post" class="mt-6">
 		<input type="hidden" name="accion" />
 		<input type="hidden" name="grupo" />
@@ -54,7 +53,7 @@ const { antetitulo, queEs, nueva } = Astro.props;
 	</form>
 </Dialogo>
 
-<Dialogo id="dialogo-borrar-grupo" antetitulo="Borrar">
+<Dialogo id="dialogo-borrar-grupo">
 	<form method="post" class="mt-4">
 		<input type="hidden" name="accion" value="borrar-grupo" />
 		<input type="hidden" name="grupo" />
