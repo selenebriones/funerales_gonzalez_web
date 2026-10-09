@@ -3,8 +3,9 @@
 import '../styles/global.css';
 import { Image } from 'astro:assets';
 import logo from '../assets/brand/logo-color.webp';
-import Footer from '../components/Footer.astro';
+import logoBlanco from '../assets/brand/logo-blanco.webp';
 import Icono from '../components/Icono.astro';
+import { sitio } from '../data/sitio';
 
 interface Props {
 	title: string;
@@ -36,7 +37,7 @@ const menu = [
 	</head>
 	<body class="min-h-screen antialiased">
 		<header>
-			<div class="bg-ciruela text-sm text-white">
+			<div class="bg-franja text-sm text-white">
 				<div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
 					<p class="font-bold tracking-wide">Panel de administración</p>
 					{menu.some((m) => m.href === ruta) && (
@@ -91,7 +92,18 @@ const menu = [
 		)}
 
 		<slot />
-		<Footer />
+
+		<!-- Pie del sitio sin contacto, menú ni aviso de privacidad: mismo acomodo, solo logo y razón social -->
+		<footer class="bg-pie text-white/80">
+			<div class="mx-auto max-w-7xl px-4 py-12">
+				<Image src={logoBlanco} alt={`${sitio.nombre}, ${sitio.lema}`} class="h-auto w-56" />
+			</div>
+			<div class="border-t border-white/10">
+				<div class="mx-auto max-w-7xl px-4 py-6 text-xs text-white/60">
+					<p>© {new Date().getFullYear()} {sitio.razonSocial}</p>
+				</div>
+			</div>
+		</footer>
 
 		<script>
 			// El aviso se oculta solo y se quita "?aviso=" de la URL para que no reaparezca al recargar.

@@ -41,6 +41,7 @@ const { queEs, nueva } = Astro.props;
 				data-abrir="dialogo-borrar-grupo"
 				data-heredar
 				data-titulo-de="tituloBorrar"
+				data-valores={JSON.stringify({ accion: 'borrar-grupo' })}
 			>
 				<Icono nombre="Trash2" class="size-4" /> Borrar {queEs}
 			</button>
