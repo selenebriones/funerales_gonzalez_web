@@ -1,6 +1,6 @@
 ---
 // Líneas de ataúdes o de urnas en el admin. Se ve una a la vez (`data-grupo`): su nombre con el menú para cambiar
-// de línea, "Editar" (que también agrega una línea nueva a esta sección), "Agregar" a su lado y debajo los renglones.
+// de línea, "Editar" (que también agrega una línea nueva a esta sección), "Agregar" a la derecha y debajo los renglones.
 // Solo si la sección se quedó sin líneas aparece el botón grande para crear la primera.
 import Icono from '../Icono.astro';
 import BotonAgregar from './BotonAgregar.astro';
@@ -41,7 +41,7 @@ const opciones = lineas.map((l) => ({ id: l.id, texto: l.linea || 'Sin subtítul
 				>
 					<Icono nombre="Pencil" class="size-4" /> Editar
 				</button>
-				<BotonAgregar texto={`Agregar ${tipo}`} dialogo="dialogo-producto" valores={{ grupo: l.id, id: '', especificaciones: [] }} />
+				<BotonAgregar texto={`Agregar ${tipo}`} dialogo="dialogo-producto" valores={{ grupo: l.id, id: '', especificaciones: [] }} class="ml-auto" />
 			</div>
 			<ul class="mt-6 grid gap-3" data-paginar>
 				{l.productos.map((p) => (

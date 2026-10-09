@@ -167,7 +167,6 @@ const valoresDe = (o: Obituario) => ({
 							nombre={o.nombre}
 							foto={o.foto}
 							nota={`${anio(o.nacimiento)} – ${anio(o.fallecimiento)} · ${o.capilla} · ${o.sala} · Servicio: ${textoMomento(o.inicio)}`}
-							obituario
 							editar={{ dialogo: 'dialogo-obituario', titulo: 'Editar obituario', valores: valoresDe(o) }}
 							borrar={{ id: o.id }}
 						/>

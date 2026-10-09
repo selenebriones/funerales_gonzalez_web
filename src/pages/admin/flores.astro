@@ -126,7 +126,7 @@ const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.u
 						>
 							<Icono nombre="Pencil" class="size-4" /> Editar
 						</button>
-						<BotonAgregar texto="Agregar arreglo" dialogo="dialogo-arreglo" valores={{ grupo: c.id, id: '' }} />
+						<BotonAgregar texto="Agregar arreglo" dialogo="dialogo-arreglo" valores={{ grupo: c.id, id: '' }} class="ml-auto" />
 					</div>
 					<ul class="mt-6 grid gap-3" data-paginar>
 						{c.arreglos.map((a) => (

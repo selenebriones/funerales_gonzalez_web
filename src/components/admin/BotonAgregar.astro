@@ -1,5 +1,5 @@
 ---
-// Botón para agregar algo nuevo. Pequeño y punteado para un renglón (ataúd, arreglo, obituario), junto a "Editar"; con `descripcion`, bloque
+// Botón para agregar algo nuevo. Pequeño y morado para un renglón (ataúd, arreglo, obituario); con `descripcion`, bloque
 // sólido y más grande para una línea o categoría, que así no se confunde con agregar una tarjeta.
 import Icono from '../Icono.astro';
 
@@ -40,7 +40,7 @@ const { texto, dialogo, valores, titulo = texto, descripcion, class: clase } = A
 	<button
 		type="button"
 		class:list={[
-			'inline-flex items-center gap-1.5 rounded-md border-2 border-dashed border-oro-oscuro/50 bg-white px-3.5 py-1.5 text-sm font-bold text-oro-oscuro transition hover:border-oro-oscuro hover:bg-marfil',
+			'inline-flex items-center gap-1.5 rounded-md bg-ciruela px-4 py-2 text-sm font-bold text-white transition hover:bg-marca',
 			clase,
 		]}
 		data-abrir={dialogo}
