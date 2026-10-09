@@ -40,28 +40,28 @@ const datosDelServicio = (o: Obituario) =>
 	description="Consulta horarios de misas y velaciones en las capillas de Funerales González."
 >
 	<main>
-		<HeroInterior antetitulo="Obituarios" titulo="Consulta horarios de misas y velaciones." />
+		<HeroInterior antetitulo="Obituarios" titulo="Consulta horarios de misas y velaciones." fondo="/fondo_hero_obituario.webp" />
 
 		<section class="bg-white py-20 sm:py-24">
 			<ul class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
 				<!-- Tarjeta: foto en gris con los datos encima y el botón pegado abajo -->
 				{obituarios.map((o, i) => (
 					<li class="flex flex-col overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5">
-						<div class="relative bg-ciruela">
-							{/* Sin foto: cruz del logo en gris, arriba para no chocar con el texto */}
+						<div class:list={['relative', o.foto ? 'bg-ciruela' : 'bg-lavanda']}>
+							{/* Sin foto: fondo claro con la cruz del logo (como el catálogo), arriba para no chocar con el texto */}
 							{o.foto ? (
 								<img src={o.foto} alt={`Fotografía de ${o.nombre}`} loading="lazy" decoding="async" class="aspect-[3/4] w-full object-cover object-top grayscale" />
 							) : (
-								<div class="flex aspect-[3/4] w-full justify-center bg-linear-to-b from-tinta to-black pt-[12%]">
-									<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-1/2 w-auto opacity-30 grayscale" />
+								<div class="flex aspect-[3/4] w-full justify-center pt-[12%]">
+									<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-1/2 w-auto opacity-40" />
 								</div>
 							)}
-							<div class="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/85 via-black/60 to-transparent px-5 pt-20 pb-5 text-center text-white">
-								<h2 class="text-xl leading-snug text-balance text-white">{o.nombre}</h2>
-								<p class="mt-1 font-serif text-oro-claro">{anio(o.nacimiento)} – {anio(o.fallecimiento)}</p>
-								<p class="mt-2 text-sm text-white/85">{o.capilla} · {o.sala}</p>
-								<p class="mt-3 flex items-center justify-center gap-1.5 border-t border-white/20 pt-3 text-sm font-semibold text-white">
-									<Icono nombre="CalendarDays" class="size-4 shrink-0 text-oro-claro" />
+							<div class:list={['absolute inset-x-0 bottom-0 px-5 pt-20 pb-5 text-center', o.foto && 'bg-linear-to-t from-black/85 via-black/60 to-transparent text-white']}>
+								<h2 class:list={['text-xl leading-snug text-balance', o.foto ? 'text-white' : 'text-ciruela']}>{o.nombre}</h2>
+								<p class:list={['mt-1 font-serif', o.foto ? 'text-oro-claro' : 'text-oro-oscuro']}>{anio(o.nacimiento)} – {anio(o.fallecimiento)}</p>
+								<p class:list={['mt-2 text-sm', o.foto ? 'text-white/85' : 'text-tinta/80']}>{o.capilla} · {o.sala}</p>
+								<p class:list={['mt-3 flex items-center justify-center gap-1.5 border-t pt-3 text-sm font-semibold', o.foto ? 'border-white/20 text-white' : 'border-ciruela/15 text-ciruela']}>
+									<Icono nombre="CalendarDays" class={`size-4 shrink-0 ${o.foto ? 'text-oro-claro' : 'text-oro-oscuro'}`} />
 									Servicio: {textoMomento(o.inicio)}
 								</p>
 							</div>
@@ -91,8 +91,8 @@ const datosDelServicio = (o: Obituario) =>
 				{o.foto ? (
 					<img src={o.foto} alt={`Fotografía de ${o.nombre}`} loading="lazy" decoding="async" class="aspect-[4/3] size-full object-cover object-top grayscale sm:aspect-auto" />
 				) : (
-					<div class="grid aspect-[4/3] size-full place-items-center bg-linear-to-b from-tinta to-black sm:aspect-auto">
-						<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-32 w-auto opacity-30 grayscale" />
+					<div class="grid aspect-[4/3] size-full place-items-center bg-lavanda sm:aspect-auto">
+						<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-32 w-auto opacity-40" />
 					</div>
 				)}
 				<div class="relative p-6 sm:p-8">

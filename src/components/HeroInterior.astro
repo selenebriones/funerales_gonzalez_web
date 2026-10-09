@@ -1,14 +1,24 @@
 ---
 // Encabezado de las páginas interiores: café del menú (marca), oscurecido a la izquierda como su hover.
+// `fondo` (opcional): imagen de public/ detrás del café, que queda como velo para que el texto se lea.
+// `enfoque` (opcional): qué parte de la foto se ve al recortarla, como object-position ("50% 35%").
 interface Props {
 	antetitulo: string;
 	titulo: string;
+	fondo?: string;
+	enfoque?: string;
 }
 
-const { antetitulo, titulo } = Astro.props;
+const { antetitulo, titulo, fondo, enfoque = '50% 50%' } = Astro.props;
 ---
 
 <section class="relative isolate overflow-hidden bg-marca text-white">
+	{fondo && (
+		<>
+			<img src={fondo} alt="" fetchpriority="high" class="absolute inset-0 -z-20 size-full object-cover" style={`object-position: ${enfoque}`} />
+			<div class="absolute inset-0 -z-10 bg-marca/70"></div>
+		</>
+	)}
 	<div class="absolute inset-0 -z-10 bg-linear-to-r from-black/35 via-black/15 to-transparent"></div>
 	<div class="mx-auto max-w-7xl px-4 py-16 sm:py-20">
 		<p class="flex items-center gap-3 text-sm font-bold tracking-[0.25em] text-oro-claro uppercase">

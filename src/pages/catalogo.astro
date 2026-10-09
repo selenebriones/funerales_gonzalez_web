@@ -17,7 +17,12 @@ const hay = (l: typeof lineas) => l.some((x) => x.productos.length);
 	description="Ataúdes de madera, metálicos y extra ancho, y urnas para cenizas. Medidas, materiales y pedido directo por WhatsApp."
 >
 	<main>
-		<HeroInterior antetitulo="Catálogo de ataúdes y urnas" titulo="Opciones pensadas para honrar a quien amaste, sin presión de decidir solo." />
+		<HeroInterior
+			antetitulo="Catálogo de ataúdes y urnas"
+			titulo="Opciones pensadas para honrar a quien amaste, sin presión de decidir solo."
+			fondo="/urna_cremacion.webp"
+			enfoque="50% 35%"
+		/>
 
 		<!-- Ataúdes -->
 		{hay(lineas) && (
