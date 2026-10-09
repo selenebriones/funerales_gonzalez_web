@@ -23,7 +23,7 @@ Rediseño de funeralesgonzalez.com (hoy en Wix) para una funeraria familiar de M
 
 ## Admin (/admin)
 
-- Solo edita el catálogo de ataúdes y urnas, las flores y los obituarios. Contraseña única en la variable `ADMIN_PASSWORD` (`.env` en local, Environment Variables en Vercel); ver `.env.example`.
+- Solo edita el catálogo de ataúdes y urnas, las flores y los obituarios. Usuario (correo) y contraseña en las variables `ADMIN_USER` y `ADMIN_PASSWORD` (`.env` en local, Environment Variables en Vercel); ver `.env.example`.
 - `/catalogo`, `/flores`, `/obituarios`, `/admin/*` e `/imagenes/*` se generan en cada visita (`prerender = false`); el resto del sitio sigue estático. Adaptador: Vercel si existe `VERCEL`, si no Node.
 - El contenido vive en el almacén (`src/lib/almacen.ts`): Vercel Blob **privado** si el proyecto tiene un Blob store conectado, si no la carpeta `.almacen/` (ignorada por git). `src/data/catalogo.ts`, `flores.ts` y `obituarios.ts` son solo el contenido inicial mientras no se haya guardado nada; cambiar textos ahí ya no afecta un sitio donde el cliente guardó cambios.
 - Las imágenes subidas pesan 1 MB como máximo (se revisa en el navegador y en el servidor), se convierten a WebP (máx. 1200 px) y se sirven en `/imagenes/...`; las fotos originales están en `public/catalogo/`, `public/flores/` y `public/obituarios/`. Sin foto se muestra la cruz del logo.

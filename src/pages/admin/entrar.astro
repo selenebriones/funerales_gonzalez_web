@@ -1,22 +1,24 @@
 ---
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import Icono from '../../components/Icono.astro';
-import { adminConfigurado, contrasenaCorrecta, iniciarSesion, sesionValida } from '../../lib/sesion';
+import { adminConfigurado, credencialesCorrectas, iniciarSesion, sesionValida } from '../../lib/sesion';
 
 export const prerender = false;
 
 if (sesionValida(Astro.cookies)) return Astro.redirect('/admin/catalogo');
 
 let error = '';
+let usuario = '';
 if (Astro.request.method === 'POST') {
 	const datos = await Astro.request.formData();
-	if (contrasenaCorrecta(String(datos.get('contrasena') ?? ''))) {
+	usuario = String(datos.get('usuario') ?? '');
+	if (credencialesCorrectas(usuario, String(datos.get('contrasena') ?? ''))) {
 		iniciarSesion(Astro.cookies);
 		return Astro.redirect('/admin/catalogo', 303);
 	}
 	// Una pausa corta hace más lento probar contraseñas al azar.
 	await new Promise((r) => setTimeout(r, 1000));
-	error = 'La contraseña no es correcta.';
+	error = 'El usuario o la contraseña no son correctos.';
 }
 ---
 
@@ -31,12 +33,24 @@ if (Astro.request.method === 'POST') {
 				<>
 					<p class="mt-2 text-sm text-tinta/80">Aquí puedes editar el catálogo de ataúdes y urnas y las flores.</p>
 					<label class="mt-6 grid gap-1.5 text-sm font-semibold text-ciruela">
+						Usuario
+						<input
+							name="usuario"
+							type="email"
+							required
+							autofocus
+							value={usuario}
+							autocomplete="username"
+							placeholder="correo@ejemplo.com"
+							class="rounded-md border border-black/15 bg-white px-3 py-2.5 font-normal text-tinta focus:border-oro-oscuro focus:outline-none"
+						/>
+					</label>
+					<label class="mt-4 grid gap-1.5 text-sm font-semibold text-ciruela">
 						Contraseña
 						<input
 							name="contrasena"
 							type="password"
 							required
-							autofocus
 							autocomplete="current-password"
 							class="rounded-md border border-black/15 bg-white px-3 py-2.5 font-normal text-tinta focus:border-oro-oscuro focus:outline-none"
 						/>
@@ -46,7 +60,8 @@ if (Astro.request.method === 'POST') {
 				</>
 			) : (
 				<p class="mt-3 text-sm text-tinta/80">
-					Falta configurar la contraseña del admin: agrega la variable <code class="font-bold">ADMIN_PASSWORD</code> al archivo
+					Falta configurar el acceso al admin: agrega las variables <code class="font-bold">ADMIN_USER</code> y
+					<code class="font-bold">ADMIN_PASSWORD</code> al archivo
 					<code class="font-bold">.env</code> (en local) o a las variables de entorno del proyecto en Vercel.
 				</p>
 			)}

@@ -1,13 +1,13 @@
-// Acceso al admin: una sola contraseña (variable ADMIN_PASSWORD) y una cookie firmada que dura 7 días.
+// Acceso al admin: un usuario y contraseña (variables ADMIN_USER y ADMIN_PASSWORD) y una cookie firmada que dura 7 días.
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { AstroCookies } from 'astro';
-import { ADMIN_PASSWORD } from 'astro:env/server';
+import { ADMIN_PASSWORD, ADMIN_USER } from 'astro:env/server';
 
 const COOKIE = 'fg_admin';
 const DURACION = 7 * 24 * 60 * 60; // segundos
 
-// Firmar con la contraseña hace que, al cambiarla, se cierren todas las sesiones abiertas.
-const firma = (valor: string) => createHmac('sha256', `fg-admin:${ADMIN_PASSWORD}`).update(valor).digest('hex');
+// Firmar con el usuario y la contraseña hace que, al cambiarlos, se cierren todas las sesiones abiertas.
+const firma = (valor: string) => createHmac('sha256', `fg-admin:${ADMIN_USER}:${ADMIN_PASSWORD}`).update(valor).digest('hex');
 
 const iguales = (a: string, b: string) => {
 	const x = Buffer.from(a);
@@ -15,9 +15,11 @@ const iguales = (a: string, b: string) => {
 	return x.length === y.length && timingSafeEqual(x, y);
 };
 
-export const adminConfigurado = () => Boolean(ADMIN_PASSWORD);
+export const adminConfigurado = () => Boolean(ADMIN_USER && ADMIN_PASSWORD);
 
-export const contrasenaCorrecta = (intento: string) => adminConfigurado() && iguales(intento, ADMIN_PASSWORD!);
+/** El usuario (un correo) no distingue mayúsculas; la contraseña sí. */
+export const credencialesCorrectas = (usuario: string, contrasena: string) =>
+	adminConfigurado() && iguales(usuario.trim().toLowerCase(), ADMIN_USER!.trim().toLowerCase()) && iguales(contrasena, ADMIN_PASSWORD!);
 
 export function iniciarSesion(cookies: AstroCookies) {
 	const vence = String(Math.floor(Date.now() / 1000) + DURACION);

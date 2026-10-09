@@ -12,7 +12,8 @@ export default defineConfig({
 	adapter: process.env.VERCEL ? vercel() : node({ mode: 'standalone' }),
 	env: {
 		schema: {
-			// Contraseña del admin (/admin). Sin ella nadie puede entrar.
+			// Usuario y contraseña del admin (/admin). Sin ellos nadie puede entrar.
+			ADMIN_USER: envField.string({ context: 'server', access: 'secret', optional: true }),
 			ADMIN_PASSWORD: envField.string({ context: 'server', access: 'secret', optional: true }),
 		},
 	},
