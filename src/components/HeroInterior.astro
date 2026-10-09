@@ -1,15 +1,20 @@
 ---
+import { Image } from 'astro:assets';
+import logoBlanco from '../assets/brand/logo-blanco.webp';
+
 // Encabezado de las páginas interiores: café del menú (marca), oscurecido a la izquierda como su hover.
 // `fondo` (opcional): imagen de public/ detrás del café, que queda como velo para que el texto se lea.
 // `enfoque` (opcional): qué parte de la foto se ve al recortarla, como object-position ("50% 35%").
+// `logo` (opcional): logotipo blanco translúcido a la derecha, solo en escritorio para no tapar el título.
 interface Props {
 	antetitulo: string;
 	titulo: string;
 	fondo?: string;
 	enfoque?: string;
+	logo?: boolean;
 }
 
-const { antetitulo, titulo, fondo, enfoque = '50% 50%' } = Astro.props;
+const { antetitulo, titulo, fondo, enfoque = '50% 50%', logo = false } = Astro.props;
 ---
 
 <section class="relative isolate overflow-hidden bg-marca text-white">
@@ -20,7 +25,14 @@ const { antetitulo, titulo, fondo, enfoque = '50% 50%' } = Astro.props;
 		</>
 	)}
 	<div class="absolute inset-0 -z-10 bg-linear-to-r from-black/35 via-black/15 to-transparent"></div>
-	<div class="mx-auto max-w-7xl px-4 py-16 sm:py-20">
+	<div class="relative mx-auto max-w-7xl px-4 py-16 sm:py-20">
+		{logo && (
+			<Image
+				src={logoBlanco}
+				alt=""
+				class="pointer-events-none absolute top-1/2 right-4 hidden h-auto w-96 -translate-y-1/2 opacity-20 xl:block"
+			/>
+		)}
 		<p class="flex items-center gap-3 text-sm font-bold tracking-[0.25em] text-oro-claro uppercase">
 			<span class="h-px w-10 bg-oro-claro/60"></span>
 			{antetitulo}
