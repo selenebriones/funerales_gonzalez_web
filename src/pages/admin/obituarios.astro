@@ -155,7 +155,10 @@ const valoresDe = (o: Obituario) => ({
 
 		<section class="bg-white py-16 sm:py-20">
 			<div class="mx-auto max-w-5xl px-4">
-				<BotonAgregar texto="Agregar obituario" titulo="Nuevo obituario" dialogo="dialogo-obituario" valores={{ id: '' }} />
+				<div class="flex flex-wrap items-center justify-between gap-4">
+					<h2 class="text-2xl sm:text-3xl">Listado</h2>
+					<BotonAgregar texto="Agregar obituario" titulo="Nuevo obituario" dialogo="dialogo-obituario" valores={{ id: '' }} />
+				</div>
 				<label class="mt-5 flex items-center gap-3 rounded-xl bg-humo px-4 py-1 ring-1 ring-black/10 focus-within:ring-oro-oscuro">
 					<Icono nombre="Search" class="size-5 shrink-0 text-oro-oscuro" />
 					<span class="sr-only">Buscar por nombre</span>
