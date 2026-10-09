@@ -54,6 +54,14 @@
 		}
 		dialogo.querySelectorAll<HTMLElement>('[data-texto]').forEach((el) => (el.textContent = String(valores[el.dataset.texto!] ?? '')));
 		dialogo.querySelectorAll<HTMLElement>('[data-si]').forEach((el) => (el.hidden = !valores[el.dataset.si!]));
+		// Campos que dejan de ser obligatorios en una sección (p. ej. el nombre de las líneas de urnas).
+		const seccion = String(valores.seccion ?? '');
+		dialogo.querySelectorAll<HTMLElement>('[data-opcional-en]').forEach((el) => {
+			const opcional = el.dataset.opcionalEn === seccion;
+			if (el instanceof HTMLInputElement) el.required = !opcional;
+			else el.hidden = opcional;
+		});
+		dialogo.querySelectorAll<HTMLElement>('[data-solo-en]').forEach((el) => (el.hidden = el.dataset.soloEn !== seccion));
 		mostrarImagen(form, typeof valores.foto === 'string' ? valores.foto : undefined);
 	}
 

@@ -46,9 +46,11 @@ const { queEs, nueva } = Astro.props;
 				<Icono nombre="Trash2" class="size-4" /> Borrar {queEs}
 			</button>
 		</div>
+		<!-- En urnas el nombre es opcional: una línea sin nombre no muestra subtítulo en la página -->
 		<label class={etiqueta}>
-			<span>Nombre <Obligatorio /></span>
-			<input name="nombre" required maxlength="80" class={campo} />
+			<span>Nombre <span data-opcional-en="urnas"><Obligatorio /></span></span>
+			<input name="nombre" required maxlength="80" class={campo} data-opcional-en="urnas" />
+			<span class="text-sm font-normal text-marca" data-solo-en="urnas" hidden>Puedes dejarlo vacío: la línea se mostrará sin subtítulo.</span>
 		</label>
 		<button type="submit" class={botonGuardar}>Guardar</button>
 	</form>

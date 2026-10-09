@@ -39,12 +39,13 @@ if (Astro.request.method === 'POST') {
 			case 'crear-grupo': {
 				const seccion = texto(datos, 'seccion') === 'urnas' ? catalogo.urnas : catalogo.lineas;
 				ancla = nuevoId();
-				seccion.push({ id: ancla, linea: obligatorio(datos, 'nombre', 'el nombre'), productos: [] });
+				// En urnas el nombre es opcional (la línea se muestra sin subtítulo).
+				seccion.push({ id: ancla, linea: seccion === catalogo.urnas ? texto(datos, 'nombre') : obligatorio(datos, 'nombre', 'el nombre'), productos: [] });
 				aviso = 'creado';
 				break;
 			}
 			case 'renombrar': {
-				linea!.linea = obligatorio(datos, 'nombre', 'el nombre');
+				linea!.linea = catalogo.urnas.includes(linea!) ? texto(datos, 'nombre') : obligatorio(datos, 'nombre', 'el nombre');
 				break;
 			}
 			case 'borrar-grupo': {
