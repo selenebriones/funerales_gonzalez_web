@@ -1,6 +1,6 @@
 ---
 // Renglón de las listas del admin: imagen a la izquierda, nombre, y botones de editar y borrar.
-// Sin foto muestra la cruz del logo sobre lavanda, igual que la página pública.
+// Sin foto muestra la paloma sobre lavanda, igual que la página pública.
 // `data-fila`, `data-id` y `data-nombre` los usa el paginador y el buscador (ScriptAdmin.astro).
 import Icono from '../Icono.astro';
 
@@ -28,11 +28,11 @@ const { nombre, foto, nota, editar, borrar } = Astro.props;
 		<img src={foto} alt="" loading="lazy" decoding="async" class="h-16 w-20 shrink-0 rounded-lg object-cover" />
 	) : (
 		<div class="grid h-16 w-20 shrink-0 place-items-center rounded-lg bg-lavanda">
-			<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />
+			<img src="/icono_paloma.svg" alt="" width="155" height="96" loading="lazy" class="w-3/4 h-auto opacity-60" />
 		</div>
 	)}
 	<div class="min-w-0 flex-1">
-		<p class="font-serif text-lg font-semibold text-balance text-ciruela">{nombre}</p>
+		<p class="font-serif text-lg font-semibold text-balance text-titulo">{nombre}</p>
 		{nota && <p class="text-sm text-tinta/75">{nota}</p>}
 	</div>
 	<div class="flex w-full shrink-0 gap-2 sm:w-auto">

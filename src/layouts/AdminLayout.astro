@@ -32,7 +32,7 @@ const menu = [
 		<meta name="robots" content="noindex, nofollow" />
 		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="theme-color" content="#281a39" />
+		<meta name="theme-color" content="#081b1e" />
 		<title>{title} · Admin Funerales González</title>
 	</head>
 	<body class="min-h-screen antialiased">
@@ -48,18 +48,19 @@ const menu = [
 				</div>
 			</div>
 			<div class="bg-white shadow-sm">
+				<!-- En celular el menú baja a su propia fila bajo el logo -->
 				<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3">
 					<a href="/admin" aria-label="Ir al inicio del admin">
-						<Image src={logo} alt="Funerales González" class="h-14 w-auto" loading="eager" />
+						<Image src={logo} alt="Funerales González" class="h-16 w-auto" loading="eager" />
 					</a>
 					{menu.some((m) => m.href === ruta) && (
-						<nav class="flex flex-1 flex-wrap items-center gap-2" aria-label="Secciones del admin">
+						<nav class="flex basis-full flex-wrap items-center gap-2 lg:flex-1 lg:basis-0" aria-label="Secciones del admin">
 							{menu.map((m) => (
 								<a
 									href={m.href}
 									aria-current={m.href === ruta ? 'page' : undefined}
 									class:list={[
-										'rounded-md px-4 py-2.5 font-bold transition',
+										'rounded-md px-3 py-2 text-sm font-bold transition sm:px-4 sm:py-2.5 sm:text-base',
 										m.href === ruta ? 'bg-marca text-white' : 'text-ciruela hover:bg-humo',
 									]}
 								>
@@ -67,7 +68,7 @@ const menu = [
 								</a>
 							))}
 							{paginaPublica && (
-								<a href={paginaPublica} target="_blank" rel="noopener" class="ml-auto flex items-center gap-2 rounded-md px-4 py-2.5 font-bold text-oro-oscuro hover:bg-humo">
+								<a href={paginaPublica} target="_blank" rel="noopener" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-oro-oscuro hover:bg-humo sm:px-4 sm:py-2.5 sm:text-base lg:ml-auto">
 									<Icono nombre="ExternalLink" class="size-5" /> Ver página
 								</a>
 							)}
@@ -95,8 +96,8 @@ const menu = [
 
 		<!-- Pie del sitio sin contacto, menú ni aviso de privacidad: mismo acomodo, solo logo y razón social -->
 		<footer class="bg-pie text-white/80">
-			<div class="mx-auto max-w-7xl px-4 py-12">
-				<Image src={logoBlanco} alt={`${sitio.nombre}, ${sitio.lema}`} class="h-auto w-56" />
+			<div class="mx-auto flex max-w-7xl justify-center px-4 py-12 lg:justify-start">
+				<Image src={logoBlanco} alt={`${sitio.nombre}, desde 1945`} class="h-auto w-56" />
 			</div>
 			<div class="border-t border-white/10">
 				<div class="mx-auto max-w-7xl px-4 py-6 text-xs text-white/60">

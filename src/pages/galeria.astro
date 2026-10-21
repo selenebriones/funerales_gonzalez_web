@@ -66,7 +66,7 @@ const fotos = grupos.flatMap((g) => g.fotos);
 	description="Un recorrido visual por las instalaciones de Funerales González: capillas, salas de velación y áreas para familiares."
 >
 	<main>
-		<HeroInterior antetitulo="Galería" titulo="Un recorrido visual por nuestras instalaciones." />
+		<HeroInterior antetitulo="Galería" titulo="Un recorrido visual por nuestras instalaciones." logo />
 
 		{grupos.map((grupo, g) => (
 			<section class:list={['py-16 sm:py-20', g % 2 ? 'bg-marfil' : 'bg-white']}>

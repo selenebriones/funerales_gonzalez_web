@@ -1,7 +1,7 @@
 // Obituarios: contenido inicial y formato. Desde el admin (/admin/obituarios) el cliente los publica y se guardan en
 // el almacén (src/lib/almacen.ts); esta lista solo se usa mientras no haya nada guardado. Los más recientes van primero.
 // `foto` es la URL de la imagen (public/obituarios/ o /imagenes/ si se subió desde el admin); sin foto, la tarjeta
-// muestra la cruz del logo. Sin `ubicacion` no aparece el botón "Ver ubicación".
+// muestra la paloma. Sin `ubicacion` no aparece el botón "Ver ubicación".
 // TODO (cliente): definir si los obituarios se capturan aquí, desde un módulo propio o desde Facebook
 // (notas del documento de contenido). Por ahora solo hay un registro de prueba.
 import { sucursales } from './sitio';

@@ -2,7 +2,7 @@
 // Desde el admin (/admin/catalogo) el cliente lo edita y se guarda en el almacén (src/lib/almacen.ts); este archivo
 // solo se usa mientras no haya nada guardado. `foto` es la URL de la imagen (public/catalogo/ o /imagenes/ si se subió
 // desde el admin). Solo tienen foto los modelos cuyo nombre coincide con funeralesgonzalez.com/ataudes y /urnas;
-// el resto muestra la cruz del logo.
+// el resto muestra la paloma.
 // TODO (cliente): catálogo depurado, fotos de los modelos faltantes, emblemas por modelo y medidas de extra ancho/jumbo.
 
 export interface Producto {

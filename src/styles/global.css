@@ -13,17 +13,21 @@
 	--color-marca: #634e3c;        /* marrón del logo */
 	--color-oro: #ad760e;          /* ocre/dorado: cabecera, acentos */
 	--color-oro-oscuro: #80490a;   /* marrón cálido: pie, enlaces, bordes */
-	--color-ciruela: #281a39;      /* morado profundo: titulares y texto fuerte */
-	--color-oro-claro: #d9b46c;    /* dorado claro: acentos sobre fondos oscuros */
-	--color-chocolate: #2a1c13;    /* café muy oscuro: pie y franja superior (desde 2026-10-09) */
+	/* Verde muy oscuro: titulares, texto fuerte, acentos, pie y franja superior (desde 2026-10-21).
+	   Conserva el nombre "ciruela" para no tocar todo el sitio. Antes: #281a39, morado profundo. */
+	--color-ciruela: #081b1e;
+	--color-oro-claro: #d1b576;    /* dorado claro: acentos sobre fondos oscuros (desde 2026-10-21; antes #d9b46c) */
+	--color-dorado: #b08737;       /* dorado de la paloma (icono_paloma.svg): líneas del separador */
+	--color-titulo: #0f464f;       /* verde petróleo: títulos h1–h4 (desde 2026-10-21; antes usaban ciruela) */
+	--color-chocolate: #2a1c13;    /* café muy oscuro: se usó en el pie y la franja del 2026-10-09 al 2026-10-21 */
 
 	/*
 	 * Fondos del pie, de la franja superior del header y de la barra del menú. Cambio en prueba: si el cliente pide volver a los
 	 * colores anteriores, basta con poner aquí los valores de "Antes".
 	 */
-	--color-pie: var(--color-chocolate);   /* Antes: var(--color-ciruela), #281a39 */
+	--color-pie: var(--color-ciruela);     /* Antes: var(--color-chocolate), #2a1c13 */
 	--color-menu: var(--color-marca);      /* Se probó var(--color-chocolate) y el cliente regresó al café de la marca */
-	--color-franja: var(--color-chocolate); /* Antes: var(--color-ciruela), #281a39 */
+	--color-franja: var(--color-ciruela);  /* Antes: var(--color-chocolate), #2a1c13 */
 
 	/* Botones de WhatsApp (verde con contraste suficiente para texto blanco) */
 	--color-whatsapp: #1f7a4d;
@@ -33,7 +37,7 @@
 	--color-rojo: #c0392b;
 
 	/* Neutros */
-	--color-lavanda: #e9e6eb;      /* fondos suaves de sección */
+	--color-lavanda: #efece8;      /* beige claro: fondos suaves (desde 2026-10-21; antes #e9e6eb, lavanda) */
 	--color-humo: #f6f6f6;         /* fondo general */
 	--color-marfil: #f7f6f4;       /* blanco cálido: fondo de servicios y sucursales */
 	--color-tinta: #2b2530;        /* texto de cuerpo */
@@ -48,7 +52,7 @@
 	}
 
 	h1, h2, h3, h4 {
-		@apply font-serif font-semibold text-ciruela;
+		@apply font-serif font-semibold text-titulo;
 	}
 
 	a {

@@ -1,6 +1,6 @@
 ---
 // Selector de imagen opcional con vista previa. Al editar muestra la foto actual; si no se elige otra, se conserva.
-// Sin imagen, la página muestra la cruz del logo.
+// Sin imagen, la página muestra la paloma.
 import Icono from '../Icono.astro';
 import { PESO_MAXIMO_IMAGEN } from '../../lib/almacen';
 ---
@@ -15,6 +15,6 @@ import { PESO_MAXIMO_IMAGEN } from '../../lib/almacen';
 		</span>
 		<input name="imagen" type="file" accept="image/jpeg,image/png,image/webp" class="sr-only" data-campo-imagen data-peso-maximo={PESO_MAXIMO_IMAGEN} />
 	</label>
-	<span class="text-xs font-normal text-tinta/70">Opcional. JPG, PNG o WEBP de hasta 1 MB; sin imagen se muestra la cruz del logo.</span>
+	<span class="text-xs font-normal text-tinta/70">Opcional. JPG, PNG o WEBP de hasta 1 MB; sin imagen se muestra la paloma.</span>
 	<span class="text-sm font-bold text-rojo" role="alert" hidden data-error-imagen></span>
 </div>

@@ -99,7 +99,7 @@ const aviso = error ? { tipo: 'error' as const, texto: error } : avisoDe(Astro.u
 
 <AdminLayout title="Flores" paginaPublica="/flores" aviso={aviso}>
 	<main>
-		<HeroInterior antetitulo="Administrar" titulo="Flores">
+		<HeroInterior tresLineas={false} antetitulo="Administrar" titulo="Flores">
 			<p class="mt-4 max-w-2xl text-white/85">Crea, renombra o borra categorías y agrega, edita o borra arreglos. Lo que guardes aparece en la página de flores.</p>
 		</HeroInterior>
 

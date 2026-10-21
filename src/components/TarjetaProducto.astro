@@ -1,5 +1,5 @@
 ---
-// Tarjeta de un ataúd o urna con su foto (o la cruz del logo si aún no hay), especificaciones y botón a WhatsApp.
+// Tarjeta de un ataúd o urna con su foto (o la paloma si aún no hay), especificaciones y botón a WhatsApp.
 import Icono from './Icono.astro';
 import IconoWhatsApp from './IconoWhatsApp.astro';
 import type { Producto } from '../data/catalogo';
@@ -20,7 +20,7 @@ const articulo = tipo === 'ataúd' ? 'el ataúd' : 'la urna';
 		<img src={producto.foto} alt={`${tipo === 'ataúd' ? 'Ataúd' : 'Urna'} ${producto.nombre}`} loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
 	) : (
 		<div class="grid aspect-[4/3] w-full place-items-center bg-lavanda">
-			<img src="/favicon_fg.png" alt="" width="512" height="512" loading="lazy" class="h-3/5 w-auto opacity-40" />
+			<img src="/icono_paloma.svg" alt="" width="155" height="96" loading="lazy" class="w-1/2 h-auto opacity-60" />
 		</div>
 	)}
 	<div class="flex flex-1 flex-col p-6">
