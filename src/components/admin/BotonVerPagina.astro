@@ -1,0 +1,19 @@
+---
+// Botón del hero del admin que abre en otra pestaña la página pública que se está editando.
+import Icono from '../Icono.astro';
+
+interface Props {
+	href: string;
+}
+
+const { href } = Astro.props;
+---
+
+<a
+	href={href}
+	target="_blank"
+	rel="noopener"
+	class="mt-8 inline-flex items-center gap-2 rounded-md px-5 py-3 font-bold text-white ring-1 ring-white/50 transition ring-inset hover:bg-white/10 hover:ring-white"
+>
+	<Icono nombre="ExternalLink" class="size-5" /> Ver página
+</a>

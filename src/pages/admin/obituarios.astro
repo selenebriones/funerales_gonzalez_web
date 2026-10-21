@@ -2,6 +2,7 @@
 // Admin de obituarios: publicar, editar y borrar. Los nuevos se agregan al inicio (los más recientes primero).
 import AdminLayout from '../../layouts/AdminLayout.astro';
 import HeroInterior from '../../components/HeroInterior.astro';
+import BotonVerPagina from '../../components/admin/BotonVerPagina.astro';
 import BotonAgregar from '../../components/admin/BotonAgregar.astro';
 import Icono from '../../components/Icono.astro';
 import CampoImagen from '../../components/admin/CampoImagen.astro';
@@ -147,10 +148,11 @@ const valoresDe = (o: Obituario) => ({
 });
 ---
 
-<AdminLayout title="Obituarios" paginaPublica="/obituarios" aviso={aviso}>
+<AdminLayout title="Obituarios" aviso={aviso}>
 	<main>
 		<HeroInterior tresLineas={false} antetitulo="Administrar" titulo="Obituarios">
 			<p class="mt-4 max-w-2xl text-white/85">Publica, edita o borra obituarios. Los nuevos aparecen primero en la página de obituarios.</p>
+			<BotonVerPagina href="/obituarios" />
 		</HeroInterior>
 
 		<section class="bg-white py-16 sm:py-20">

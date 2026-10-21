@@ -9,13 +9,11 @@ import { sitio } from '../data/sitio';
 
 interface Props {
 	title: string;
-	/** Página pública que se edita, para el botón "Ver página". */
-	paginaPublica?: string;
 	/** Mensaje tras guardar ("Cambios guardados") o de error. */
 	aviso?: { tipo: 'ok' | 'error'; texto: string };
 }
 
-const { title, paginaPublica, aviso } = Astro.props;
+const { title, aviso } = Astro.props;
 const ruta = Astro.url.pathname.replace(/\/$/, '');
 const menu = [
 	{ href: '/admin/catalogo', texto: 'Catálogo de ataúdes y urnas' },
@@ -48,31 +46,44 @@ const menu = [
 				</div>
 			</div>
 			<div class="bg-white shadow-sm">
-				<!-- En celular el menú baja a su propia fila bajo el logo -->
-				<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 gap-y-3 px-4 py-3">
+				<!-- En celular y tableta el menú se abre con el botón de hamburguesa, en su propia fila bajo el logo -->
+				<div class="mx-auto flex max-w-7xl flex-wrap items-center gap-x-8 px-4 py-3">
 					<a href="/admin" aria-label="Ir al inicio del admin">
 						<Image src={logo} alt="Funerales González" class="h-16 w-auto" loading="eager" />
 					</a>
 					{menu.some((m) => m.href === ruta) && (
-						<nav class="flex basis-full flex-wrap items-center gap-2 lg:flex-1 lg:basis-0" aria-label="Secciones del admin">
-							{menu.map((m) => (
-								<a
-									href={m.href}
-									aria-current={m.href === ruta ? 'page' : undefined}
-									class:list={[
-										'rounded-md px-3 py-2 text-sm font-bold transition sm:px-4 sm:py-2.5 sm:text-base',
-										m.href === ruta ? 'bg-marca text-white' : 'text-ciruela hover:bg-humo',
-									]}
-								>
-									{m.texto}
-								</a>
-							))}
-							{paginaPublica && (
-								<a href={paginaPublica} target="_blank" rel="noopener" class="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-bold text-oro-oscuro hover:bg-humo sm:px-4 sm:py-2.5 sm:text-base lg:ml-auto">
-									<Icono nombre="ExternalLink" class="size-5" /> Ver página
-								</a>
-							)}
-						</nav>
+						<>
+							<button
+								type="button"
+								class="ml-auto grid size-11 place-items-center rounded-md text-ciruela hover:bg-humo lg:hidden"
+								aria-controls="menu-admin"
+								aria-expanded="false"
+								data-menu-boton
+							>
+								<span class="sr-only">Abrir menú</span>
+								<span data-icono-abrir><Icono nombre="Menu" class="size-7" /></span>
+								<span class="hidden" data-icono-cerrar><Icono nombre="X" class="size-7" /></span>
+							</button>
+							<nav
+								id="menu-admin"
+								class="mt-3 hidden basis-full flex-col gap-1 border-t border-black/5 pt-3 data-abierto:flex lg:mt-0 lg:flex lg:flex-1 lg:basis-0 lg:flex-row lg:items-center lg:justify-end lg:gap-2 lg:border-0 lg:pt-0"
+								aria-label="Secciones del admin"
+								data-menu-panel
+							>
+								{menu.map((m) => (
+									<a
+										href={m.href}
+										aria-current={m.href === ruta ? 'page' : undefined}
+										class:list={[
+											'rounded-md px-4 py-3 text-lg font-bold transition lg:py-2.5 lg:text-base',
+											m.href === ruta ? 'bg-marca text-white' : 'text-ciruela hover:bg-humo',
+										]}
+									>
+										{m.texto}
+									</a>
+								))}
+							</nav>
+						</>
 					)}
 				</div>
 			</div>
@@ -111,6 +122,17 @@ const menu = [
 			const aviso = document.querySelector<HTMLElement>('[data-aviso]');
 			if (aviso) setTimeout(() => aviso.classList.add('opacity-0', 'pointer-events-none'), 4000);
 			const url = new URL(location.href);
+			// Menú de hamburguesa (celular y tableta).
+			const boton = document.querySelector<HTMLButtonElement>('[data-menu-boton]');
+			const panel = document.querySelector<HTMLElement>('[data-menu-panel]');
+			boton?.addEventListener('click', () => {
+				const abierto = boton.getAttribute('aria-expanded') === 'true';
+				boton.setAttribute('aria-expanded', String(!abierto));
+				boton.querySelector('.sr-only')!.textContent = abierto ? 'Abrir menú' : 'Cerrar menú';
+				boton.querySelector('[data-icono-abrir]')?.classList.toggle('hidden', !abierto);
+				boton.querySelector('[data-icono-cerrar]')?.classList.toggle('hidden', abierto);
+				panel?.toggleAttribute('data-abierto', !abierto);
+			});
 			if (url.searchParams.has('aviso')) {
 				url.searchParams.delete('aviso');
 				history.replaceState(null, '', url);
