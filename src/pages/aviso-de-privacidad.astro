@@ -1,11 +1,141 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import HeroInterior from '../components/HeroInterior.astro';
+import { sitio } from '../data/sitio';
+
+// Texto del aviso proporcionado por el cliente (octubre de 2026). Va en usted, como documento legal;
+// no reescribirlo sin su visto bueno. Al actualizarlo, cambiar también la fecha del final.
+const titulo = 'mt-12 text-2xl sm:text-3xl';
+const subtitulo = 'mt-8 text-xl';
+const parrafo = 'mt-4';
+const lista = 'mt-4 list-disc space-y-2 pl-6 marker:text-oro-oscuro';
+const numerada = 'mt-4 list-decimal space-y-2 pl-6 marker:font-semibold marker:text-oro-oscuro';
 ---
 
-<!-- TODO: texto del aviso de privacidad proporcionado por el cliente -->
-<Layout title="Aviso de privacidad · Funerales González">
-	<main class="mx-auto max-w-3xl px-4 py-24 text-center">
-		<h1 class="text-4xl">Aviso de privacidad</h1>
-		<p class="mt-4 text-marca">Contenido pendiente.</p>
+<Layout
+	title="Aviso de privacidad · Funerales González"
+	description="Aviso de privacidad de Funerales González: qué datos personales recabamos, para qué los usamos y cómo ejercer sus derechos ARCO."
+>
+	<main>
+		<HeroInterior antetitulo="Aviso de privacidad" titulo="Cuidamos tus datos personales con respeto y confidencialidad." />
+
+		<section class="bg-white py-20 sm:py-24">
+			<article class="mx-auto max-w-3xl px-4 text-lg leading-relaxed text-tinta/85 [&_strong]:font-semibold [&_strong]:text-tinta">
+				<h2 class="text-2xl sm:text-3xl">1. Identidad y domicilio del responsable</h2>
+				<p class={parrafo}>
+					<strong>PREVISION FUNERAL GONZALEZ S.A. DE C.V.</strong> (en lo sucesivo denominada como "Funerales González"), con Registro Federal de Contribuyentes PFG891221B46 y domicilio ubicado en Avenida Simón Bolívar No. 2160 Norte, Colonia Mitras Centro, C.P. 64460, Monterrey, Nuevo León, México, es el responsable del tratamiento, uso, protección y confidencialidad de sus datos personales.
+				</p>
+				<p class={parrafo}>
+					Para el desarrollo de sus actividades, la empresa cuenta con Aviso de Funcionamiento y Responsable Sanitario registrado ante la Comisión Federal para la Protección contra Riesgos Sanitarios (COFEPRIS) con giro de Servicios Funerarios y Laboratorio de Embalsamamiento, a cargo del Responsable Sanitario T.S.E. Alejandra Lizeth Urbano Juárez (Cédula Profesional No. 7602434).
+				</p>
+
+				<h2 class={titulo}>2. Datos personales recabados</h2>
+				<p class={parrafo}>Para llevar a cabo las finalidades descritas en el presente Aviso de Privacidad, recabamos las siguientes categorías de datos personales:</p>
+				<ul class={lista}>
+					<li>
+						<strong>A través de nuestro sitio web y canales digitales (WhatsApp, FaceTime, Facebook):</strong>
+						<ul class="mt-2 list-[circle] space-y-1 pl-6">
+							<li>Datos de identificación y contacto: nombre completo, teléfono fijo o celular y domicilio.</li>
+						</ul>
+					</li>
+					<li>
+						<strong>Para efectos de facturación (en caso de ser solicitada):</strong>
+						<ul class="mt-2 list-[circle] space-y-1 pl-6">
+							<li>Datos fiscales: Registro Federal de Contribuyentes (RFC), Razón Social, Domicilio Fiscal y Régimen Fiscal.</li>
+						</ul>
+					</li>
+					<li>
+						<strong>Durante la contratación presencial y formalización del servicio (Uso Inmediato o Planes a Futuro):</strong>
+						<ul class="mt-2 list-[circle] space-y-1 pl-6">
+							<li>Copia de identificación oficial vigente (INE, Pasaporte, Cédula Profesional).</li>
+							<li>Datos sobre los bienes o servicios contratados.</li>
+						</ul>
+					</li>
+					<li>
+						<strong>Datos del finado y datos sensibles (trámites sanitarios y legales):</strong>
+						<ul class="mt-2 list-[circle] space-y-1 pl-6">
+							<li>Para la atención de servicios de Uso Inmediato, se recabarán datos del finado, certificados de defunción, causa del fallecimiento, actas del Registro Civil y/o datos sobre creencias religiosas o preferencias culturales del titular o sus familiares únicamente para la correcta organización de la velación, ceremonia, preparación sanitaria, traslado, cremación o inhumación.</li>
+						</ul>
+					</li>
+				</ul>
+
+				<h2 class={titulo}>3. Finalidades del tratamiento de los datos personales</h2>
+				<p class={parrafo}>Sus datos personales serán utilizados para las siguientes finalidades:</p>
+				<h3 class={subtitulo}>A. Finalidades primarias (necesarias para el servicio solicitado)</h3>
+				<ol class={numerada}>
+					<li>Proveer la atención, cotización e información relativa a los servicios funerarios de Uso Inmediato y Planes de Previsión a Futuro.</li>
+					<li>Formalizar la relación contractual, integrar el expediente físico/digital del cliente y dar seguimiento a la prestación del servicio.</li>
+					<li>Realizar los trámites legales, administrativos y sanitarios requeridos ante las autoridades competentes, incluyendo la Secretaría de Salud, COFEPRIS y el Registro Civil (permisos de traslado, inhumación, cremación, embalsamamiento y obtención de actas de defunción).</li>
+					<li>Emisión de facturas electrónicas, comprobantes fiscales y gestión de cobros.</li>
+					<li>Brindar atención y soporte al cliente a través de nuestras vías oficiales de comunicación (Teléfono de oficina, WhatsApp, FaceTime y Facebook).</li>
+				</ol>
+				<h3 class={subtitulo}>B. Finalidades secundarias (opcionales)</h3>
+				<ol class={numerada}>
+					<li>Envío de encuestas de evaluación y calidad sobre la atención recibida.</li>
+					<li>Envío de información sobre planes de previsión a futuro o servicios conmemorativos (pudiendo oponerse en cualquier momento).</li>
+				</ol>
+
+				<h2 class={titulo}>4. Transferencia de datos personales</h2>
+				<p class={parrafo}>
+					Funerales González no vende ni comercializa sus datos personales. Sus datos podrán ser transferidos sin requerir de su consentimiento en los términos del Artículo 37 de la LFPDPPP, en los siguientes casos:
+				</p>
+				<ol class={numerada}>
+					<li><strong>Autoridades sanitarias y gubernamentales:</strong> a la COFEPRIS, Secretaría de Salud de Nuevo León, Registro Civil u organismos judiciales, únicamente para dar cumplimiento a los trámites obligatorios de sanidad, permisos de traslado/cremación/inhumación y emisión del Acta de Defunción.</li>
+					<li><strong>Proveedores de servicios auxiliares:</strong> panteones, parques funerarios, crematorios o empresas de traslado, exclusivamente cuando sea indispensable para la ejecución del servicio contratado.</li>
+				</ol>
+
+				<h2 class={titulo}>5. Uso de plataformas de terceros y redireccionamiento digital</h2>
+				<p class={parrafo}>Nuestro sitio web no procesa pagos ni transacciones en línea. La comunicación se canaliza directamente a través de enlaces externos a plataformas operadas por terceros:</p>
+				<ul class={lista}>
+					<li>WhatsApp (Meta Platforms, Inc.)</li>
+					<li>Facebook (Meta Platforms, Inc.)</li>
+					<li>FaceTime (Apple Inc.)</li>
+				</ul>
+				<p class={parrafo}>
+					Al hacer clic en cualquiera de estos botones o enlaces, el usuario abandona nuestro sitio web y queda sujeto a los términos de uso y políticas de privacidad de dichas plataformas. Se recomienda revisar las políticas de privacidad de Meta Platforms y Apple Inc. para conocer el tratamiento de sus datos al utilizar sus servicios.
+				</p>
+
+				<h2 class={titulo}>6. Cookies y tecnologías de rastreo</h2>
+				<p class={parrafo}>
+					Le informamos que en nuestro sitio web podemos utilizar cookies, web beacons, herramientas de análisis (como Google Analytics) y tecnologías de seguimiento publicitario (como el Píxel de Meta o Google Tag Manager) para:
+				</p>
+				<ul class={lista}>
+					<li>Reconocer el origen de las visitas y medir la efectividad de campañas publicitarias.</li>
+					<li>Mejorar la navegación y la experiencia del usuario.</li>
+				</ul>
+				<p class={parrafo}>
+					Estas herramientas recaban datos como la dirección IP, tipo de navegador, sistema operativo y páginas consultadas. Estas tecnologías no recaban datos personales directos como su nombre o teléfono a menos que usted los proporcione voluntariamente.
+				</p>
+				<p class={parrafo}>
+					<strong>Cómo desactivar las cookies:</strong> puede deshabilitar o configurar el uso de cookies en cualquier momento ajustando la configuración de privacidad de su navegador de Internet (Chrome, Safari, Edge, Firefox).
+				</p>
+
+				<h2 class={titulo}>7. Ejercicio de derechos ARCO y revocación del consentimiento</h2>
+				<p class={parrafo}>
+					Usted tiene derecho a conocer qué datos personales tenemos de usted, para qué los utilizamos y las condiciones del uso que les damos (<strong>Acceso</strong>); solicitar la corrección de su información personal (<strong>Rectificación</strong>); que la eliminemos de nuestros registros (<strong>Cancelación</strong>); así como oponerse al uso de sus datos para fines específicos (<strong>Oposición</strong>).
+				</p>
+				<p class={parrafo}>Para el ejercicio de cualquiera de los Derechos ARCO o la revocación de su consentimiento, podrá presentar la solicitud correspondiente mediante los siguientes canales:</p>
+				<ul class={lista}>
+					<li><strong>Correo electrónico:</strong> <a href={`mailto:${sitio.correo}`} class="font-semibold hover:underline">{sitio.correo}</a></li>
+					<li><strong>Teléfono de atención:</strong> <a href={sitio.telefono.href} class="font-semibold hover:underline">{sitio.telefono.mostrar}</a></li>
+					<li><strong>De forma presencial:</strong> en el domicilio de la oficina ubicado en Av. Simón Bolívar No. 2160 Norte, Col. Mitras Centro, C.P. 64460, Monterrey, N.L.</li>
+				</ul>
+				<h3 class={subtitulo}>Requisitos de la solicitud</h3>
+				<ol class={numerada}>
+					<li>Nombre completo del titular y correo o teléfono de contacto.</li>
+					<li>Documento que acredite la identidad del titular (o de su representante legal).</li>
+					<li>Descripción clara de los datos respecto de los cuales busca ejercer alguno de los derechos ARCO.</li>
+					<li>El plazo de respuesta por parte de la empresa será de un máximo de 20 días hábiles, haciéndole saber la determinación adoptada.</li>
+				</ol>
+
+				<h2 class={titulo}>8. Cambios y actualizaciones al aviso de privacidad</h2>
+				<p class={parrafo}>
+					El presente Aviso de Privacidad puede sufrir modificaciones, cambios o actualizaciones derivadas de nuevos requerimientos legales, normativas de la COFEPRIS, o políticas internas de la empresa.
+				</p>
+				<p class={parrafo}>Cualquier modificación estará disponible para su consulta permanente a través de nuestro sitio web en el enlace de "Aviso de Privacidad".</p>
+
+				<p class="mt-12 border-t border-black/10 pt-6 text-base text-tinta/70">Última fecha de actualización: octubre de 2026.</p>
+			</article>
+		</section>
 	</main>
 </Layout>

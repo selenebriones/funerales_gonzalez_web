@@ -16,6 +16,7 @@ export const sitio = {
 		href: whatsappCon('Hola, necesito información'),
 	},
 	facebook: 'https://www.facebook.com/FuneralesGonzalezOficial',
+	correo: 'funerales.gonzalez@hotmail.com',
 	razonSocial: 'Previsiones González, S.A. de C.V.',
 };
 
