@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import HeroInterior from '../components/HeroInterior.astro';
 import Icono from '../components/Icono.astro';
 import Separador from '../components/Separador.astro';
+import BarraHover from '../components/BarraHover.astro';
+import { tarjetaHover } from '../components/tarjeta';
 import IconoWhatsApp from '../components/IconoWhatsApp.astro';
 import TituloSeccion from '../components/TituloSeccion.astro';
 import { sitio, whatsappCon } from '../data/sitio';
@@ -51,10 +53,11 @@ const noIncluye = ['Pago de destape', 'Flores', 'Esquela', 'Impuesto municipal p
 		<section class="bg-marfil py-20 sm:py-24">
 			<ul class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
 				{servicios.map((s) => (
-					<li id={s.ancla} class="flex scroll-mt-8 flex-col items-center rounded-xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-black/5 target:ring-2 target:ring-oro-oscuro">
-						<Icono nombre={s.icono} class="size-16 stroke-[0.75] text-ciruela" />
+					<li id={s.ancla} class={`flex scroll-mt-8 flex-col items-center rounded-xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-black/5 target:ring-2 target:ring-oro-oscuro ${tarjetaHover}`}>
+						<Icono nombre={s.icono} class="size-16 stroke-[0.75] text-ciruela transition group-hover:text-oro-oscuro" />
 						<h2 class="mt-5 text-xl text-balance">{s.titulo}</h2>
 						<p class="mt-2 text-tinta/80">{s.texto}</p>
+						<BarraHover />
 					</li>
 				))}
 			</ul>

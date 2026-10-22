@@ -8,7 +8,7 @@ interface Props {
 const { class: clase = '' } = Astro.props;
 ---
 
-<div class:list={['pointer-events-none flex items-center gap-1.5 text-dorado sm:gap-2', clase]} aria-hidden="true">
+<div class:list={['pointer-events-none flex items-center gap-1.5 text-dorado sm:gap-2', clase]} aria-hidden="true" data-aparece="separador">
 	<!-- Líneas: angostas en la orilla, más gruesas junto a la paloma. Las de la derecha son el espejo de las de la izquierda. -->
 	<svg class="h-3 flex-1 sm:h-3.5" viewBox="0 0 100 10" preserveAspectRatio="none" fill="currentColor">
 		<polygon points="0,4.2 100,0 100,4.2" />

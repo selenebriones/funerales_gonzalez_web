@@ -46,7 +46,7 @@ const datosDelServicio = (o: Obituario) =>
 			<ul class="mx-auto grid max-w-7xl gap-6 px-4 sm:grid-cols-2 lg:grid-cols-4">
 				<!-- Tarjeta: foto en gris con los datos encima y el botón pegado abajo -->
 				{obituarios.map((o, i) => (
-					<li class="flex flex-col overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5">
+					<li class="flex flex-col overflow-hidden rounded-xl shadow-sm ring-1 ring-black/5 transition duration-300 hover:shadow-md hover:ring-oro-oscuro">
 						<div class:list={['relative', o.foto ? 'bg-ciruela' : 'bg-lavanda']}>
 							{/* Sin foto: fondo claro con la paloma (como el catálogo), arriba para no chocar con el texto */}
 							{o.foto ? (

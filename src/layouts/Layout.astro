@@ -30,11 +30,66 @@ const {
 		<meta name="theme-color" content="#081b1e" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<!-- Animaciones de entrada solo si la persona no pidió reducir el movimiento -->
+		<script is:inline>
+			if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('animar');
+		</script>
 	</head>
 	<body class="min-h-screen antialiased">
 		<Header />
 		<slot />
 		<Footer />
 		<BotonesContactoFlotantes />
+
+		<script>
+			// Aparición al hacer scroll: títulos y separadores marcados con data-aparece, más cada elemento de las
+			// rejillas del contenido (tarjetas, columnas). Las rejillas de 2 columnas entran desde los lados.
+			if (document.documentElement.classList.contains('animar')) {
+				const fuera = '[data-entrada], dialog, [data-carrusel]';
+				document.querySelectorAll<HTMLElement>('main .grid[class*="gap-"]').forEach((rejilla) => {
+					if (rejilla.closest(fuera)) return;
+					const hijos = [...rejilla.children] as HTMLElement[];
+					hijos.forEach((hijo, i) => {
+						if (hijo.hasAttribute('data-aparece') || hijo.querySelector('[data-aparece]')) return;
+						hijo.dataset.aparece = hijos.length === 2 ? (i === 0 ? 'izquierda' : 'derecha') : '';
+					});
+				});
+				document.querySelectorAll<HTMLElement>('main [data-carrusel]').forEach((c) => (c.dataset.aparece = ''));
+
+				// Se revisa en cada scroll (una vez por cuadro). Cada vez que algo entra en pantalla se anima, y al salir
+				// por completo (arriba o abajo) se reinicia, para que vuelva a animarse al regresar a él.
+				const elementos = [...document.querySelectorAll<HTMLElement>('main [data-aparece]')];
+				const heros = [...document.querySelectorAll<HTMLElement>('main [data-entrada]')];
+				let programado = false;
+				const revisar = () => {
+					programado = false;
+					const alto = innerHeight;
+					let enEsteCuadro = 0;
+					elementos.forEach((el) => {
+						const caja = el.getBoundingClientRect();
+						if (caja.height === 0) return;
+						const visible = el.classList.contains('visible');
+						if (!visible && caja.top < alto * 0.92 && caja.bottom > 0) {
+							// Lo que aparece a la vez entra escalonado; lo que llega solo con el scroll, sin espera.
+							el.style.setProperty('--retraso', `${Math.min(enEsteCuadro++, 4) * 110}ms`);
+							el.classList.add('visible');
+						} else if (visible && (caja.top > alto || caja.bottom < 0)) {
+							el.classList.remove('visible');
+						}
+					});
+					// Los heros repiten su entrada al volver a ellos.
+					heros.forEach((hero) => {
+						const caja = hero.getBoundingClientRect();
+						hero.classList.toggle('fuera', caja.bottom < 0 || caja.top > alto);
+					});
+				};
+				const alMover = () => {
+					if (!programado) (programado = true), requestAnimationFrame(revisar);
+				};
+				// click: los filtros y menús que muestran contenido oculto (categorías, páginas) sin hacer scroll
+				['scroll', 'resize', 'click'].forEach((ev) => addEventListener(ev, alMover, { passive: true }));
+				revisar();
+			}
+		</script>
 	</body>
 </html>

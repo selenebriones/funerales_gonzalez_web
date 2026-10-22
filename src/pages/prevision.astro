@@ -3,6 +3,8 @@ import Layout from '../layouts/Layout.astro';
 import HeroInterior from '../components/HeroInterior.astro';
 import Icono from '../components/Icono.astro';
 import Separador from '../components/Separador.astro';
+import BarraHover from '../components/BarraHover.astro';
+import { tarjetaHover } from '../components/tarjeta';
 import IconoWhatsApp from '../components/IconoWhatsApp.astro';
 import TituloSeccion from '../components/TituloSeccion.astro';
 import { gruposDePlanes, incluyenTodos, pesos } from '../data/planes';
@@ -60,9 +62,10 @@ const mensajeCotizacion = [
 
 				<ul class="mt-14 flex flex-wrap justify-center gap-6">
 					{beneficios.map((b) => (
-						<li class="flex w-full flex-col items-center rounded-xl bg-marfil px-6 py-8 text-center sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)]">
+						<li class={`flex w-full flex-col items-center rounded-xl bg-marfil px-6 py-8 text-center ring-1 ring-transparent sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] ${tarjetaHover}`} data-aparece>
 							<Icono nombre={b.icono} class="size-12 stroke-[1] text-oro-oscuro" />
 							<p class="mt-4 font-serif text-lg font-semibold text-balance text-ciruela">{b.texto}</p>
+							<BarraHover />
 						</li>
 					))}
 				</ul>

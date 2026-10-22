@@ -10,6 +10,8 @@ const servicios = [
 	{ icono: 'HeartHandshake', titulo: 'Recepción de restos', ancla: 'recepcion-de-restos' },
 	{ icono: 'ShieldCheck', titulo: 'Crematorio propio', ancla: 'crematorio-propio' },
 ] as const;
+import BarraHover from '../BarraHover.astro';
+import { tarjetaHover } from '../tarjeta';
 ---
 
 <section class="bg-marfil py-20 sm:py-24">
@@ -19,12 +21,13 @@ const servicios = [
 		<ul class="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
 			{servicios.map((s) => (
 				<li>
-					<a href={`/servicios#${s.ancla}`} class="group flex h-full flex-col items-center rounded-xl bg-white px-7 py-10 text-center shadow-sm ring-1 ring-black/5 transition hover:-translate-y-0.5 hover:shadow-md hover:ring-oro-oscuro">
+					<a href={`/servicios#${s.ancla}`} class={`flex h-full flex-col items-center rounded-xl bg-white px-7 py-10 text-center shadow-sm ring-1 ring-black/5 ${tarjetaHover}`}>
 						<Icono nombre={s.icono} class="size-20 stroke-[0.75] text-ciruela transition group-hover:text-oro-oscuro" />
 						<h3 class="mt-6 flex-1 text-xl text-balance">{s.titulo}</h3>
 						<span class="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-oro-oscuro">
 							Ver detalles <Icono nombre="ArrowRight" class="size-4 transition group-hover:translate-x-1" />
 						</span>
+						<BarraHover />
 					</a>
 				</li>
 			))}

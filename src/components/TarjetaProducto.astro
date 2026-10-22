@@ -13,11 +13,12 @@ interface Props {
 const { producto, tipo } = Astro.props;
 
 const articulo = tipo === 'ataúd' ? 'el ataúd' : 'la urna';
+import { fotoHover, tarjetaHover } from './tarjeta';
 ---
 
-<article class="flex h-full flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-black/5 transition hover:ring-oro-oscuro">
+<article class={`flex h-full flex-col rounded-xl bg-white shadow-sm ring-1 ring-black/5 ${tarjetaHover}`}>
 	{producto.foto ? (
-		<img src={producto.foto} alt={`${tipo === 'ataúd' ? 'Ataúd' : 'Urna'} ${producto.nombre}`} loading="lazy" decoding="async" class="aspect-[4/3] w-full object-cover" />
+		<img src={producto.foto} alt={`${tipo === 'ataúd' ? 'Ataúd' : 'Urna'} ${producto.nombre}`} loading="lazy" decoding="async" class={`aspect-[4/3] w-full object-cover ${fotoHover}`} />
 	) : (
 		<div class="grid aspect-[4/3] w-full place-items-center bg-lavanda">
 			<img src="/icono_paloma.svg" alt="" width="155" height="96" loading="lazy" class="w-1/2 h-auto opacity-60" />
