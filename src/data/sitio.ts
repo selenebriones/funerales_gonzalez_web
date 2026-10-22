@@ -17,7 +17,7 @@ export const sitio = {
 	},
 	facebook: 'https://www.facebook.com/FuneralesGonzalezOficial',
 	correo: 'funerales.gonzalez@hotmail.com',
-	razonSocial: 'Previsiones González, S.A. de C.V.',
+	razonSocial: 'Previsión Funeral González, S.A. de C.V.',
 };
 
 const mapa = (direccion: string) =>
